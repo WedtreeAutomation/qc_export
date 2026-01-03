@@ -1,4 +1,15 @@
 import streamlit as st
+
+# ---------------------------------------------------------
+# 1. PAGE CONFIG MUST BE THE VERY FIRST STREAMLIT COMMAND
+# ---------------------------------------------------------
+st.set_page_config(
+    page_title="Odoo QC & Relocation Portal", 
+    page_icon="📦", 
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 import pandas as pd
 import xmlrpc.client
 from datetime import datetime
@@ -7,17 +18,6 @@ from dotenv import load_dotenv
 import time
 import io
 import xlsxwriter
-from openpyxl import load_workbook
-
-# ---------------------------------------------------------
-# 1. PAGE CONFIG MUST BE THE VERY FIRST STREAMLIT COMMAND
-# ---------------------------------------------------------
-st.set_page_config(
-    page_title="Odoo QC Portal", 
-    page_icon="📦", 
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
 
 # Load environment variables
 load_dotenv()
@@ -32,6 +32,32 @@ ODOO_ADMIN_PASSWORD = os.getenv("ODOO_ADMIN_PASSWORD")
 
 APP_USERNAME = os.getenv("APP_USERNAME")
 APP_PASSWORD = os.getenv("APP_PASSWORD")
+
+# ============================
+# INITIALIZE SESSION STATE
+# ============================
+def init_session_state():
+    """Initialize all session state variables"""
+    if 'logged_in' not in st.session_state:
+        st.session_state.logged_in = False
+    if 'current_tab' not in st.session_state:
+        st.session_state.current_tab = "QC Export"
+    if 'odoo_conn' not in st.session_state:
+        st.session_state.odoo_conn = None
+    
+    # Relocation tab session state
+    if 'relocation_processing' not in st.session_state:
+        st.session_state.relocation_processing = False
+    if 'relocation_results' not in st.session_state:
+        st.session_state.relocation_results = None
+    if 'relocation_logs' not in st.session_state:
+        st.session_state.relocation_logs = []
+    
+    # QC tab session state
+    if 'qc_selected' not in st.session_state:
+        st.session_state.qc_selected = None
+    if 'qc_data' not in st.session_state:
+        st.session_state.qc_data = None
 
 # ============================
 # MODERN CSS STYLING
@@ -50,35 +76,6 @@ def inject_custom_css():
         .stApp {
             background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
             color: #1e293b !important;
-        }
-        
-        /* Tab Styling */
-        .stTabs [data-baseweb="tab-list"] {
-            gap: 8px;
-            background-color: transparent;
-        }
-        
-        .stTabs [data-baseweb="tab"] {
-            background-color: #f1f5f9;
-            border-radius: 12px 12px 0 0;
-            padding: 16px 24px;
-            font-weight: 600;
-            border: 2px solid #e2e8f0;
-            border-bottom: none;
-            transition: all 0.3s ease;
-        }
-        
-        .stTabs [data-baseweb="tab"]:hover {
-            background-color: #e2e8f0;
-        }
-        
-        .stTabs [aria-selected="true"] {
-            background-color: #ffffff !important;
-            border-color: #3b82f6 !important;
-            border-bottom: 2px solid white !important;
-            margin-bottom: -2px;
-            color: #3b82f6 !important;
-            box-shadow: 0 -2px 8px rgba(59, 130, 246, 0.1);
         }
         
         /* Header Styling */
@@ -104,7 +101,7 @@ def inject_custom_css():
         }
         
         /* Input Fields */
-        .stTextInput input, .stSelectbox select, .stFileUploader input, .stNumberInput input {
+        .stTextInput input, .stSelectbox select, .stNumberInput input {
             color: #1e293b !important;
             background-color: #ffffff !important;
             border: 2px solid #e2e8f0 !important;
@@ -137,22 +134,20 @@ def inject_custom_css():
             box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4) !important;
         }
         
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
-        }
-        
-        .btn-danger:hover {
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4) !important;
-        }
-        
-        .btn-success {
+        /* Primary Action Button */
+        .primary-button button {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
         }
         
-        .btn-success:hover {
+        .primary-button button:hover {
             box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4) !important;
+        }
+        
+        /* Danger Button */
+        .danger-button button {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
         }
         
         /* Cards */
@@ -170,33 +165,6 @@ def inject_custom_css():
             transform: translateY(-4px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
             border-color: #3b82f6;
-        }
-        
-        /* Special Cards */
-        .process-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
-            border: 2px solid #e0f2fe;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.1);
-            margin-bottom: 24px;
-        }
-        
-        .upload-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
-            border: 2px dashed #86efac;
-            border-radius: 16px;
-            padding: 40px 30px;
-            text-align: center;
-            margin: 20px 0;
-        }
-        
-        .config-card {
-            background: linear-gradient(135deg, #ffffff 0%, #fef3c7 100%);
-            border: 2px solid #fcd34d;
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 20px;
         }
         
         /* Metrics */
@@ -219,6 +187,25 @@ def inject_custom_css():
             border-radius: 12px !important;
             overflow: hidden !important;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+        }
+        
+        /* Tabs */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 8px;
+        }
+        
+        .stTabs [data-baseweb="tab"] {
+            border-radius: 10px 10px 0 0;
+            padding: 12px 24px;
+            font-weight: 600;
+            background-color: #f1f5f9;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .stTabs [aria-selected="true"] {
+            background-color: #3b82f6 !important;
+            color: white !important;
+            border-color: #3b82f6 !important;
         }
         
         /* Success/Info/Warning Messages */
@@ -339,14 +326,17 @@ def inject_custom_css():
             color: #991b1b;
         }
         
-        .status-success {
-            background-color: #d1fae5;
-            color: #065f46;
+        /* File Uploader */
+        .stFileUploader {
+            border: 2px dashed #e2e8f0 !important;
+            border-radius: 12px !important;
+            padding: 20px !important;
+            background-color: #f8fafc !important;
         }
         
-        .status-failed {
-            background-color: #fee2e2;
-            color: #991b1b;
+        .stFileUploader:hover {
+            border-color: #3b82f6 !important;
+            background-color: #eff6ff !important;
         }
         
         /* Divider */
@@ -357,26 +347,18 @@ def inject_custom_css():
         }
         
         /* Progress Bar */
-        .stProgress > div > div {
-            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%) !important;
-        }
-        
-        /* Location ID Input */
-        .location-input {
-            font-family: monospace !important;
-            font-size: 16px !important;
-            font-weight: 600 !important;
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+        .stProgress > div > div > div > div {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
         }
     </style>
     """, unsafe_allow_html=True)
 
 # ============================
-# BACKEND FUNCTIONS (CACHED)
+# BACKEND FUNCTIONS
 # ============================
 @st.cache_resource(show_spinner=False)
 def get_odoo_connection():
-    """Get cached Odoo connection"""
+    """Establish Odoo connection and cache it"""
     try:
         common = xmlrpc.client.ServerProxy(f"{ODOO_URL}/xmlrpc/2/common")
         uid = common.authenticate(ODOO_DB, ODOO_ADMIN_USER, ODOO_ADMIN_PASSWORD, {})
@@ -385,12 +367,12 @@ def get_odoo_connection():
         models = xmlrpc.client.ServerProxy(f"{ODOO_URL}/xmlrpc/2/object")
         return {"common": common, "uid": uid, "models": models}
     except Exception as e:
-        st.error(f"Connection Error: {str(e)}")
+        st.error(f"Connection error: {str(e)}")
         return None
 
 @st.cache_data(ttl=600, show_spinner=False)
 def fetch_qc_list(_models, uid, password):
-    """Fetch QC records from Odoo"""
+    """Fetch QC list from Odoo"""
     try:
         qc_ids = _models.execute_kw(
             ODOO_DB, uid, password,
@@ -407,139 +389,19 @@ def fetch_qc_list(_models, uid, password):
             )
             return [qc["name"] for qc in qc_records]
         return []
-    except Exception as e:
-        st.error(f"Fetch Error: {str(e)}")
+    except Exception:
         return []
-
-@st.cache_data(ttl=600, show_spinner=False)
-def fetch_locations(_models, uid, password):
-    """Fetch location names and IDs from Odoo"""
-    try:
-        location_ids = _models.execute_kw(
-            ODOO_DB, uid, password,
-            "stock.location", "search",
-            [[["usage", "=", "internal"]]],
-            {"limit": 100}
-        )
-        
-        if location_ids:
-            locations = _models.execute_kw(
-                ODOO_DB, uid, password,
-                "stock.location", "read",
-                [location_ids],
-                {"fields": ["id", "complete_name", "usage"]}
-            )
-            return locations
-        return []
-    except Exception as e:
-        st.error(f"Location Fetch Error: {str(e)}")
-        return []
-
-def get_location_details(models, uid, password, location_id):
-    """Get location name by ID"""
-    try:
-        locations = models.execute_kw(
-            ODOO_DB, uid, password,
-            "stock.location", "read",
-            [[location_id]],
-            {"fields": ["complete_name", "usage"]}
-        )
-        if locations:
-            return locations[0]
-        return None
-    except:
-        return None
-
-def process_bulk_relocation(models, uid, password, df, lot_column="Lot", dest_location_id=None):
-    """Process bulk relocation of lots"""
-    success = []
-    failed = []
-    
-    ctx = {'action_ref': 'stock.action_view_inventory_tree'}
-    
-    progress_bar = st.progress(0)
-    status_text = st.empty()
-    
-    for index, row in df.iterrows():
-        lot_name = str(row[lot_column]).strip()
-        
-        # Update progress
-        progress = (index + 1) / len(df)
-        progress_bar.progress(progress)
-        status_text.text(f"Processing: {lot_name} ({index + 1}/{len(df)})")
-        
-        if not lot_name or lot_name.lower() == 'nan':
-            failed.append((lot_name, "Empty/Invalid lot name"))
-            continue
-        
-        try:
-            # STEP 1 — Find lot
-            lot_ids = models.execute_kw(
-                ODOO_DB, uid, password,
-                'stock.lot', 'search',
-                [[['name', '=', lot_name]]]
-            )
-            
-            if not lot_ids:
-                failed.append((lot_name, "Lot Not Found"))
-                continue
-            
-            lot_id = lot_ids[0]
-            
-            # STEP 2 — Find quant
-            quant_ids = models.execute_kw(
-                ODOO_DB, uid, password,
-                'stock.quant', 'search',
-                [[['lot_id', '=', lot_id]]]
-            )
-            
-            if not quant_ids:
-                failed.append((lot_name, "Quant Not Found"))
-                continue
-            
-            # STEP 3 — Create relocate wizard
-            wizard_id = models.execute_kw(
-                ODOO_DB, uid, password,
-                'stock.quant.relocate', 'create',
-                [{
-                    'quant_ids': [(6, 0, quant_ids)],
-                    'dest_location_id': dest_location_id,
-                    'message': f"Relocated via Streamlit Portal to Location ID: {dest_location_id}",
-                }],
-                {'context': ctx}
-            )
-            
-            # STEP 4 — Confirm relocate
-            models.execute_kw(
-                ODOO_DB, uid, password,
-                'stock.quant.relocate', 'action_relocate_quants',
-                [[wizard_id]],
-                {'context': ctx}
-            )
-            
-            success.append(lot_name)
-            
-        except Exception as e:
-            error_msg = str(e)
-            if "Access Denied" in error_msg:
-                error_msg = "Permission denied - check user roles"
-            failed.append((lot_name, error_msg))
-    
-    progress_bar.empty()
-    status_text.empty()
-    
-    return success, failed
 
 # ============================
 # TAB 1: QC DATA EXPORT
 # ============================
-def tab_qc_export(models, uid):
-    """First tab for QC Data Export"""
-    st.markdown("# 📊 QC Data Export")
-    st.markdown("Export and analyze QC data from Odoo")
+def show_qc_export_tab(models, uid):
+    """Display QC Export functionality"""
+    st.markdown("# 📊 Quality Control Dashboard")
+    st.markdown("Export and analyze QC data with ease")
     st.markdown("---")
     
-    # --- 1. FILTER SECTION ---
+    # Filter Section
     st.markdown('<div class="metric-card">', unsafe_allow_html=True)
     st.markdown("### 🔍 Search QC Records")
     
@@ -550,14 +412,15 @@ def tab_qc_export(models, uid):
         st.warning("⚠️ No QC records found in Odoo.")
         st.markdown('</div>', unsafe_allow_html=True)
         return
-
+    
     c1, c2 = st.columns([4, 1])
     with c1:
         display_options = ["🔎 Select or type to search..."] + qc_names
         selected_option = st.selectbox(
             "QC Reference", 
             options=display_options,
-            label_visibility="collapsed"
+            label_visibility="collapsed",
+            key="qc_selectbox"
         )
         
         if selected_option == "🔎 Select or type to search...":
@@ -570,22 +433,22 @@ def tab_qc_export(models, uid):
         fetch_btn = st.button("🚀 Fetch Data", use_container_width=True, key="fetch_qc_data")
         
     st.markdown('</div>', unsafe_allow_html=True)
-
-    # --- 2. DATA SECTION ---
+    
+    # Data Section
     if fetch_btn and selected_qc:
         try:
             with st.spinner(f"⏳ Fetching data for {selected_qc}..."):
                 qc_ids = models.execute_kw(ODOO_DB, uid, ODOO_ADMIN_PASSWORD, 
-                                         "stock.quantity.check", "search", 
-                                         [[("name", "=", selected_qc)]])
+                                          "stock.quantity.check", "search", 
+                                          [[("name", "=", selected_qc)]])
                 
                 if not qc_ids:
                     st.error("❌ Reference not found in database.")
                     return
                     
                 line_ids = models.execute_kw(ODOO_DB, uid, ODOO_ADMIN_PASSWORD, 
-                                           "stock.quantity.check.line", "search", 
-                                           [[("quantity_check_id", "=", qc_ids[0])]])
+                                            "stock.quantity.check.line", "search", 
+                                            [[("quantity_check_id", "=", qc_ids[0])]])
                 
                 if not line_ids:
                     st.info("⚠️ This QC reference has no product lines.")
@@ -609,8 +472,10 @@ def tab_qc_export(models, uid):
                         })
                     
                     df = pd.DataFrame(data)
-
-                    # ANIMATED METRICS
+                    st.session_state.qc_data = df
+                    st.session_state.qc_selected = selected_qc
+                    
+                    # Analytics Overview
                     st.markdown("### 📈 Analytics Overview")
                     m1, m2, m3, m4 = st.columns(4)
                     
@@ -633,14 +498,14 @@ def tab_qc_export(models, uid):
                         st.markdown('<div class="metric-card">', unsafe_allow_html=True)
                         st.metric("🏷️ Categories", df["Category"].nunique())
                         st.markdown('</div>', unsafe_allow_html=True)
-
-                    st.markdown("<br>", unsafe_allow_html=True)
-
-                    # DATA TABLE
-                    st.markdown("### 📋 Detailed Records")
-                    st.dataframe(df, height=400, use_container_width=True)
                     
-                    # DOWNLOAD SECTION
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    
+                    # Detailed Records
+                    st.markdown("### 📋 Detailed Records")
+                    st.dataframe(df, height=400)
+                    
+                    # Export Options
                     st.markdown("---")
                     st.markdown("### 📥 Export Options")
                     st.caption("Download your data in multiple formats")
@@ -653,10 +518,10 @@ def tab_qc_export(models, uid):
                         st.download_button(
                             label="📄 Download CSV",
                             data=csv,
-                            file_name=f"qc_{selected_qc}_{timestamp}.csv",
+                            file_name=f"{selected_qc}_{timestamp}.csv",
                             mime="text/csv",
                             use_container_width=True,
-                            key="download_csv"
+                            key="download_csv_qc"
                         )
                         
                     with d2:
@@ -666,10 +531,10 @@ def tab_qc_export(models, uid):
                         st.download_button(
                             label="📊 Download Excel",
                             data=buffer.getvalue(),
-                            file_name=f"qc_{selected_qc}_{timestamp}.xlsx",
+                            file_name=f"{selected_qc}_{timestamp}.xlsx",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                             use_container_width=True,
-                            key="download_excel"
+                            key="download_excel_qc"
                         )
                     
                     with d3:
@@ -678,316 +543,412 @@ def tab_qc_export(models, uid):
         except Exception as e:
             st.error(f"❌ System Error: {str(e)}")
             st.caption("Please contact support if this error persists.")
+    
+    # Display cached data if available
+    elif st.session_state.qc_data is not None and st.session_state.qc_selected:
+        df = st.session_state.qc_data
+        selected_qc = st.session_state.qc_selected
+        
+        st.info(f"📊 Showing cached data for: {selected_qc}")
+        
+        # Analytics Overview
+        st.markdown("### 📈 Analytics Overview")
+        m1, m2, m3, m4 = st.columns(4)
+        
+        with m1:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("📦 Total Items", len(df))
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+        with m2:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("✅ Active", len(df[df["Status"]=="Active"]))
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+        with m3:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("⛔ Ignored", len(df[df["Status"]=="Ignored"]))
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+        with m4:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("🏷️ Categories", df["Category"].nunique())
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # Detailed Records
+        st.markdown("### 📋 Detailed Records")
+        st.dataframe(df, height=400)
+        
+        # Export Options
+        st.markdown("---")
+        st.markdown("### 📥 Export Options")
+        
+        d1, d2, d3 = st.columns([1, 1, 2])
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+        
+        with d1:
+            csv = df.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="📄 Download CSV",
+                data=csv,
+                file_name=f"{selected_qc}_{timestamp}.csv",
+                mime="text/csv",
+                use_container_width=True,
+                key="download_csv_qc_cached"
+            )
+            
+        with d2:
+            buffer = io.BytesIO()
+            with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+                df.to_excel(writer, index=False, sheet_name='QC Data')
+            st.download_button(
+                label="📊 Download Excel",
+                data=buffer.getvalue(),
+                file_name=f"{selected_qc}_{timestamp}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True,
+                key="download_excel_qc_cached"
+            )
+        
+        with d3:
+            st.button("🔄 Refresh Data", 
+                     on_click=lambda: st.session_state.update({"qc_data": None, "qc_selected": None}),
+                     use_container_width=True,
+                     key="refresh_qc_data")
 
 # ============================
 # TAB 2: BULK RELOCATION
 # ============================
-def tab_bulk_relocation(models, uid):
-    """Second tab for Bulk Relocation"""
-    st.markdown("# 🚚 Bulk Relocation Manager")
-    st.markdown("Move multiple lots to destination location in one go")
+def show_bulk_relocation_tab(models, uid):
+    """Display Bulk Relocation functionality"""
+    st.markdown("# 📦 Bulk Relocation Tool")
+    st.markdown("Mass relocate lots to destination locations")
     st.markdown("---")
     
-    # Initialize session state for location ID
-    if 'dest_location_id' not in st.session_state:
-        st.session_state.dest_location_id = None
-    if 'location_name' not in st.session_state:
-        st.session_state.location_name = None
-    if 'location_details' not in st.session_state:
-        st.session_state.location_details = None
-    
-    # Process Information Card
-    st.markdown('<div class="process-card">', unsafe_allow_html=True)
-    st.markdown("### 📋 Process Overview")
+    # Destination Location Configuration
+    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+    st.markdown("### ⚙️ Relocation Settings")
     
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown("**📂 Input Format:**")
-        st.markdown("- Excel file with LOT numbers")
-        st.markdown("- One column named 'Lot' (configurable)")
-        st.markdown("- Max 1000 rows per batch")
-        
-    with col2:
-        st.markdown("**🎯 Destination:**")
-        st.markdown("- Manually enter Location ID")
-        st.markdown("- Verify location before processing")
-        st.markdown("- Automated relocation")
-        st.markdown("- Real-time progress tracking")
-    
-    st.markdown("</div>", unsafe_allow_html=True)
-    
-    # Location Configuration Card
-    st.markdown('<div class="config-card">', unsafe_allow_html=True)
-    st.markdown("### ⚙️ Destination Configuration")
-    
-    loc_col1, loc_col2, loc_col3 = st.columns([2, 1, 2])
-    
-    with loc_col1:
-        # Manual Location ID Input
-        location_id = st.number_input(
-            "📍 Destination Location ID",
+        DEST_LOCATION_ID = st.number_input(
+            "Destination Location ID",
             min_value=1,
-            value=st.session_state.dest_location_id if st.session_state.dest_location_id else 262,
-            step=1,
-            help="Enter the Odoo location ID where you want to move the lots",
-            key="location_input"
+            value=262,
+            help="Enter the ID of the destination location (Damage/Stock)",
+            key="dest_location_id"
         )
-    
-    with loc_col2:
+    with col2:
         st.markdown("<br>", unsafe_allow_html=True)
-        verify_btn = st.button("🔍 Verify", use_container_width=True, key="verify_location")
+        st.info(f"📍 Lots will be relocated to Location ID: **{DEST_LOCATION_ID}**")
     
-    with loc_col3:
-        if st.session_state.location_name:
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.info(f"**Current:** {st.session_state.location_name}")
-        else:
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.warning("⚠️ Location not verified")
-    
-    # Verify Location Button Action
-    if verify_btn and location_id:
-        with st.spinner("🔍 Verifying location..."):
-            location_details = get_location_details(models, uid, ODOO_ADMIN_PASSWORD, location_id)
-            
-            if location_details:
-                st.session_state.dest_location_id = location_id
-                st.session_state.location_name = location_details.get('complete_name', 'Unknown')
-                st.session_state.location_details = location_details
-                st.success(f"✅ Verified: {location_details.get('complete_name', 'Unknown')}")
-                st.rerun()
-            else:
-                st.error(f"❌ Location ID {location_id} not found or inaccessible")
-    
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # File Upload Section
-    st.markdown('<div class="upload-card">', unsafe_allow_html=True)
+    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
     st.markdown("### 📤 Upload Excel File")
     
     uploaded_file = st.file_uploader(
-        "Choose an Excel file", 
+        "Choose an Excel file with 'Lot' column",
         type=['xlsx', 'xls'],
-        label_visibility="collapsed"
+        help="Excel file must contain a column named 'Lot'",
+        key="relocation_uploader"
     )
     
-    if uploaded_file:
+    if uploaded_file is not None:
         try:
-            # Read the Excel file
+            # Read and validate the Excel file
             df = pd.read_excel(uploaded_file)
             
-            # Show file info
-            st.success(f"✅ File loaded successfully: {uploaded_file.name}")
-            st.info(f"📊 Found {len(df)} rows and {len(df.columns)} columns")
+            if 'Lot' not in df.columns:
+                st.error("❌ Excel file must contain a column named 'Lot'")
+                st.markdown('</div>', unsafe_allow_html=True)
+                return
             
-            # Check if location is configured
-            if not st.session_state.dest_location_id:
-                st.warning("⚠️ Please enter and verify a destination location ID first!")
+            # Display preview
+            st.markdown("### 📋 Data Preview")
+            st.dataframe(df.head(), use_container_width=True)
             
-            # Column selection
-            st.markdown("---")
-            st.markdown("### ⚙️ File Configuration")
+            # Statistics
+            st.markdown("### 📊 Statistics")
+            col_stats1, col_stats2 = st.columns(2)
+            with col_stats1:
+                st.metric("Total Lots", len(df))
+            with col_stats2:
+                st.metric("Unique Lots", df['Lot'].nunique())
             
-            col1, col2 = st.columns(2)
-            with col1:
-                # Auto-detect or select LOT column
-                lot_columns = [col for col in df.columns if 'lot' in str(col).lower() or 'serial' in str(col).lower()]
-                default_col = lot_columns[0] if lot_columns else df.columns[0]
-                
-                lot_column = st.selectbox(
-                    "Select LOT Column",
-                    options=df.columns.tolist(),
-                    index=df.columns.get_loc(default_col) if default_col in df.columns else 0,
-                    help="Select the column containing LOT numbers",
-                    key="lot_column_select"
-                )
+            # Sample lots
+            st.markdown("### 🎯 Sample Lots")
+            st.code("\n".join(df['Lot'].dropna().head(10).astype(str).tolist()))
             
-            with col2:
-                # Location verification display
-                if st.session_state.location_name:
-                    st.markdown("**📍 Destination:**")
-                    st.markdown(f"**ID:** `{st.session_state.dest_location_id}`")
-                    st.markdown(f"**Name:** {st.session_state.location_name}")
-                else:
-                    st.warning("Location not set")
-            
-            # Preview Data
-            st.markdown("### 👁️ Data Preview")
-            st.dataframe(df.head(10), use_container_width=True)
-            
-            # Start Processing Section
-            st.markdown("---")
-            st.markdown("### 🚀 Start Relocation")
-            
-            col1, col2, col3 = st.columns([2, 1, 2])
-            
-            with col2:
-                # Start button with validation
-                if st.session_state.dest_location_id:
-                    if st.button("▶️ Start Bulk Relocation", 
-                               use_container_width=True, 
-                               type="primary", 
-                               key="start_relocation",
-                               disabled=(st.session_state.dest_location_id is None)):
-                        
-                        if len(df) > 1000:
-                            st.warning("⚠️ Large file detected. Processing first 1000 rows only.")
-                            df = df.head(1000)
-                        
-                        # Confirmation dialog
-                        with st.expander("⚠️ Confirm Action", expanded=True):
-                            st.markdown(f"""
-                            **You are about to move {len(df)} LOT(s) to:**
-                            - **Location ID:** {st.session_state.dest_location_id}
-                            - **Location Name:** {st.session_state.location_name}
-                            
-                            **This action cannot be undone.**
-                            """)
-                            
-                            confirm_col1, confirm_col2 = st.columns(2)
-                            with confirm_col1:
-                                if st.button("✅ Confirm & Proceed", 
-                                           use_container_width=True,
-                                           key="confirm_proceed"):
-                                    
-                                    # Process in a try block
-                                    try:
-                                        with st.spinner("🚀 Starting bulk relocation process..."):
-                                            success, failed = process_bulk_relocation(
-                                                models, 
-                                                uid, 
-                                                ODOO_ADMIN_PASSWORD, 
-                                                df, 
-                                                lot_column,
-                                                st.session_state.dest_location_id
-                                            )
-                                        
-                                        # Results Display
-                                        st.markdown("---")
-                                        st.markdown("### 📊 Results Summary")
-                                        
-                                        res_col1, res_col2, res_col3 = st.columns(3)
-                                        with res_col1:
-                                            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-                                            st.metric("Total Processed", len(df))
-                                            st.markdown('</div>', unsafe_allow_html=True)
-                                        
-                                        with res_col2:
-                                            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-                                            st.metric("✅ Success", len(success))
-                                            st.markdown('</div>', unsafe_allow_html=True)
-                                        
-                                        with res_col3:
-                                            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-                                            st.metric("❌ Failed", len(failed))
-                                            st.markdown('</div>', unsafe_allow_html=True)
-                                        
-                                        # Detailed Results
-                                        if failed:
-                                            st.markdown("#### 📝 Failed Items")
-                                            failed_df = pd.DataFrame(failed, columns=["LOT Number", "Error Message"])
-                                            st.dataframe(failed_df, use_container_width=True)
-                                            
-                                            # Download failed report
-                                            csv_failed = failed_df.to_csv(index=False).encode('utf-8')
-                                            st.download_button(
-                                                label="📥 Download Failed Report",
-                                                data=csv_failed,
-                                                file_name=f"failed_relocation_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
-                                                mime="text/csv",
-                                                use_container_width=True,
-                                                key="download_failed"
-                                            )
-                                        
-                                        if success:
-                                            st.balloons()
-                                            st.success(f"🎉 Successfully relocated {len(success)} LOT(s) to {st.session_state.location_name}!")
-                                            
-                                            # Show success list
-                                            with st.expander("📋 View Successfully Relocated LOTs"):
-                                                st.write(", ".join(success[:20]))
-                                                if len(success) > 20:
-                                                    st.caption(f"... and {len(success) - 20} more")
-                                        
-                                    except Exception as e:
-                                        st.error(f"❌ Processing Error: {str(e)}")
-                                
-                            with confirm_col2:
-                                if st.button("❌ Cancel", 
-                                           use_container_width=True,
-                                           key="cancel_action"):
-                                    st.info("Action cancelled")
-                else:
-                    st.warning("Please verify location ID first")
-            
-            with col3:
-                # Location info box
-                if st.session_state.location_name:
-                    st.markdown("""
-                    <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); 
-                                border-radius: 12px; 
-                                padding: 16px; 
-                                border: 2px solid #86efac;">
-                        <h4 style="margin: 0 0 8px 0;">📍 Ready to Relocate</h4>
-                        <p style="margin: 0; font-size: 14px; color: #166534;">
-                            Destination location verified and ready for use.
-                        </p>
-                    </div>
-                    """, unsafe_allow_html=True)
-                else:
-                    st.markdown("""
-                    <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); 
-                                border-radius: 12px; 
-                                padding: 16px; 
-                                border: 2px solid #f59e0b;">
-                        <h4 style="margin: 0 0 8px 0;">⚠️ Attention Required</h4>
-                        <p style="margin: 0; font-size: 14px; color: #92400e;">
-                            Please verify destination location ID before proceeding.
-                        </p>
-                    </div>
-                    """, unsafe_allow_html=True)
-                
         except Exception as e:
-            st.error(f"❌ Error processing file: {str(e)}")
+            st.error(f"Error reading file: {str(e)}")
+            st.markdown('</div>', unsafe_allow_html=True)
+            return
     
-    else:
-        st.markdown("""
-        <div style="text-align: center;">
-            <div style="font-size: 48px; margin-bottom: 16px;">📁</div>
-            <h3>Drag & Drop Excel File</h3>
-            <p style="color: #64748b;">Upload an Excel file containing LOT numbers to begin</p>
-            <p style="font-size: 12px; color: #94a3b8;">Supports .xlsx and .xls formats</p>
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
     
-    st.markdown("</div>", unsafe_allow_html=True)
-    
-    # Optional: Location Browser
-    with st.expander("🔍 Browse Available Locations (Internal)"):
-        with st.spinner("Loading locations..."):
-            locations = fetch_locations(models, uid, ODOO_ADMIN_PASSWORD)
+    # Action Section
+    if uploaded_file is not None:
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.markdown("### 🚀 Actions")
         
-        if locations:
-            location_df = pd.DataFrame(locations)
-            location_df = location_df[['id', 'complete_name', 'usage']]
-            location_df.columns = ['ID', 'Location Name', 'Type']
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            if st.button("▶️ Start Relocation", 
+                        type="primary",
+                        use_container_width=True,
+                        key="start_relocation"):
+                # Initialize processing state
+                st.session_state.relocation_processing = True
+                st.session_state.relocation_logs = []
+                st.session_state.relocation_results = None
+                
+                # Store uploaded file in session state for processing
+                st.session_state.relocation_file = uploaded_file
+                st.session_state.relocation_dest_id = DEST_LOCATION_ID
+                
+                # Trigger rerun to start processing
+                st.experimental_rerun()
+        
+        with col2:
+            if st.button("🔄 Reset", 
+                        use_container_width=True,
+                        key="reset_relocation"):
+                # Clear relocation state
+                st.session_state.relocation_processing = False
+                st.session_state.relocation_results = None
+                st.session_state.relocation_logs = []
+                if 'relocation_file' in st.session_state:
+                    del st.session_state.relocation_file
+                st.experimental_rerun()
+        
+        # Show processing status
+        if st.session_state.relocation_processing:
+            st.warning("⏳ Processing in progress... Please wait.")
             
-            st.dataframe(location_df, use_container_width=True, height=300)
-            st.caption("💡 Tip: Use these IDs as reference for your destination")
+            # Process the file if we're in processing state
+            if 'relocation_file' in st.session_state:
+                process_relocation_file(models, uid)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Display results if available
+    if (st.session_state.relocation_results is not None and 
+        not st.session_state.relocation_processing):
+        display_relocation_results()
+
+def process_relocation_file(models, uid):
+    """Process the relocation file"""
+    try:
+        # Read the file for processing
+        uploaded_file = st.session_state.relocation_file
+        DEST_LOCATION_ID = st.session_state.relocation_dest_id
+        
+        df = pd.read_excel(uploaded_file)
+        LOT_COLUMN = "Lot"
+        
+        # Initialize counters
+        success = []
+        failed = []
+        
+        # Create progress bar and status
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        
+        # Process each lot
+        total_lots = len(df)
+        ctx = {'action_ref': 'stock.action_view_inventory_tree'}
+        
+        for index, row in df.iterrows():
+            lot_name = str(row[LOT_COLUMN]).strip()
+            
+            # Update progress
+            progress = (index + 1) / total_lots
+            progress_bar.progress(progress)
+            status_text.text(f"Processing {index + 1}/{total_lots}: {lot_name}")
+            
+            # Log entry
+            log_entry = {
+                'timestamp': datetime.now().strftime("%H:%M:%S"),
+                'lot': lot_name,
+                'status': 'Processing',
+                'message': 'Started processing'
+            }
+            st.session_state.relocation_logs.append(log_entry)
+            
+            if not lot_name or lot_name.lower() == 'nan':
+                failed.append((lot_name, "Empty lot name"))
+                log_entry['status'] = 'Failed'
+                log_entry['message'] = 'Empty lot name'
+                continue
+            
+            try:
+                # Step 1: Find lot
+                lot_ids = models.execute_kw(
+                    ODOO_DB, uid, ODOO_ADMIN_PASSWORD,
+                    'stock.lot', 'search',
+                    [[['name', '=', lot_name]]]
+                )
+                
+                if not lot_ids:
+                    failed.append((lot_name, "Lot not found"))
+                    log_entry['status'] = 'Failed'
+                    log_entry['message'] = 'Lot not found in Odoo'
+                    continue
+                
+                lot_id = lot_ids[0]
+                
+                # Step 2: Find quant
+                quant_ids = models.execute_kw(
+                    ODOO_DB, uid, ODOO_ADMIN_PASSWORD,
+                    'stock.quant', 'search',
+                    [[['lot_id', '=', lot_id]]]
+                )
+                
+                if not quant_ids:
+                    failed.append((lot_name, "Quant not found"))
+                    log_entry['status'] = 'Failed'
+                    log_entry['message'] = 'No stock quant found'
+                    continue
+                
+                # Step 3: Create relocate wizard
+                wizard_id = models.execute_kw(
+                    ODOO_DB, uid, ODOO_ADMIN_PASSWORD,
+                    'stock.quant.relocate', 'create',
+                    [{
+                        'quant_ids': [(6, 0, quant_ids)],
+                        'dest_location_id': DEST_LOCATION_ID,
+                        'message': "Relocated via Streamlit Portal",
+                    }],
+                    {'context': ctx}
+                )
+                
+                # Step 4: Confirm relocate
+                models.execute_kw(
+                    ODOO_DB, uid, ODOO_ADMIN_PASSWORD,
+                    'stock.quant.relocate', 'action_relocate_quants',
+                    [[wizard_id]],
+                    {'context': ctx}
+                )
+                
+                success.append(lot_name)
+                log_entry['status'] = 'Success'
+                log_entry['message'] = f'Relocated to location {DEST_LOCATION_ID}'
+                
+            except Exception as e:
+                failed.append((lot_name, str(e)))
+                log_entry['status'] = 'Failed'
+                log_entry['message'] = str(e)
+        
+        # Clear progress indicators
+        progress_bar.empty()
+        status_text.empty()
+        
+        # Store results
+        st.session_state.relocation_results = {
+            'success': success,
+            'failed': failed,
+            'total': total_lots,
+            'timestamp': datetime.now()
+        }
+        
+        # Clear temporary file from session state
+        if 'relocation_file' in st.session_state:
+            del st.session_state.relocation_file
+        
+        # Update processing state
+        st.session_state.relocation_processing = False
+        
+        # Force rerun to update UI
+        st.experimental_rerun()
+        
+    except Exception as e:
+        st.error(f"❌ Error during processing: {str(e)}")
+        st.session_state.relocation_processing = False
+        if 'relocation_file' in st.session_state:
+            del st.session_state.relocation_file
+
+def display_relocation_results():
+    """Display relocation results"""
+    results = st.session_state.relocation_results
+    
+    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+    st.markdown("### 📊 Processing Results")
+    
+    # Summary metrics
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Total Processed", results['total'])
+    with col2:
+        success_rate = (len(results['success']) / results['total'] * 100) if results['total'] > 0 else 0
+        st.metric("Success", len(results['success']), 
+                 delta=f"{success_rate:.1f}%")
+    with col3:
+        failure_rate = (len(results['failed']) / results['total'] * 100) if results['total'] > 0 else 0
+        st.metric("Failed", len(results['failed']),
+                 delta=f"-{failure_rate:.1f}%",
+                 delta_color="inverse")
+    
+    # Detailed results in tabs
+    tab1, tab2, tab3 = st.tabs(["✅ Success", "❌ Failed", "📋 Logs"])
+    
+    with tab1:
+        if results['success']:
+            success_df = pd.DataFrame(results['success'], columns=['Successfully Relocated Lots'])
+            st.dataframe(success_df, use_container_width=True)
+            
+            # Download button
+            csv = success_df.to_csv(index=False)
+            st.download_button(
+                label="📥 Download Success List",
+                data=csv,
+                file_name=f"success_relocation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                mime="text/csv",
+                use_container_width=True,
+                key="download_success_relocation"
+            )
         else:
-            st.info("No internal locations found or access denied.")
+            st.info("No lots were successfully relocated.")
+    
+    with tab2:
+        if results['failed']:
+            failed_df = pd.DataFrame(results['failed'], columns=['Lot', 'Error'])
+            st.dataframe(failed_df, use_container_width=True)
+            
+            # Download button
+            csv = failed_df.to_csv(index=False)
+            st.download_button(
+                label="📥 Download Failed List",
+                data=csv,
+                file_name=f"failed_relocation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                mime="text/csv",
+                use_container_width=True,
+                key="download_failed_relocation"
+            )
+        else:
+            st.info("No failures occurred during processing.")
+    
+    with tab3:
+        if st.session_state.relocation_logs:
+            log_df = pd.DataFrame(st.session_state.relocation_logs)
+            st.dataframe(log_df, use_container_width=True)
+        else:
+            st.info("No logs available.")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================
 # MAIN APP LOGIC
 # ============================
 def main():
-    inject_custom_css()
+    # Initialize session state first
+    init_session_state()
     
-    # Session State Init
-    if 'logged_in' not in st.session_state:
-        st.session_state.logged_in = False
-    if 'current_tab' not in st.session_state:
-        st.session_state.current_tab = "QC Export"
+    # Inject CSS styling
+    inject_custom_css()
     
     # ----------------------------------
     # SIDEBAR (LOGIN & USER PROFILE)
@@ -997,11 +958,11 @@ def main():
             st.markdown("### 🔐 Login Portal")
             st.markdown("---")
             
-            # --- LOGIN FORM ---
+            # Login Form
             with st.form(key="login_form"):
                 st.markdown("**Enter your credentials**")
-                user_input = st.text_input("Username", value="", placeholder="Enter username")
-                pass_input = st.text_input("Password", value="", type="password", placeholder="Enter password")
+                user_input = st.text_input("Username", value="", placeholder="Enter username", key="login_username")
+                pass_input = st.text_input("Password", value="", type="password", placeholder="Enter password", key="login_password")
                 
                 st.markdown("<br>", unsafe_allow_html=True)
                 login_clicked = st.form_submit_button("🚀 Sign In", use_container_width=True)
@@ -1015,10 +976,7 @@ def main():
                                 st.session_state.odoo_conn = conn
                                 st.success("✅ Login successful!")
                                 time.sleep(0.5)
-                                if hasattr(st, "rerun"):
-                                    st.rerun()
-                                else:
-                                    st.experimental_rerun()
+                                st.experimental_rerun()
                             else:
                                 st.error("❌ Odoo connection failed")
                     else:
@@ -1028,37 +986,54 @@ def main():
             st.caption("🔒 Secure Odoo Integration")
 
         else:
-            # --- LOGGED IN VIEW ---
+            # Logged In View
             st.markdown(f"""
             <div class="user-badge">
                 <div style="font-size: 48px; margin-bottom: 12px;">👤</div>
                 <div style="font-size: 18px; font-weight: 600;">{APP_USERNAME}</div>
-                <div style="font-size: 12px; opacity: 0.9; margin-top: 8px;">● Connected</div>
+                <div style="font-size: 12px; opacity: 0.9; margin-top: 8px;">● Connected to Odoo</div>
             </div>
             """, unsafe_allow_html=True)
             
-            st.markdown("### ⚡ Quick Actions")
+            st.markdown("### 📂 Navigation")
             
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button("🔄 Refresh", use_container_width=True, help="Sync latest data", key="sidebar_refresh"):
-                    fetch_qc_list.clear()
-                    st.success("✅ Refreshed!")
-                    time.sleep(0.5)
-                    if hasattr(st, "rerun"):
-                        st.rerun()
-                    else:
-                        st.experimental_rerun()
-            with col2:
-                if st.button("🚪 Logout", use_container_width=True, key="sidebar_logout"):
-                    st.session_state.logged_in = False
+            # Navigation buttons
+            col_nav1, col_nav2 = st.columns(2)
+            with col_nav1:
+                if st.button("📊 QC Export", 
+                           use_container_width=True,
+                           key="nav_qc"):
                     st.session_state.current_tab = "QC Export"
-                    st.session_state.dest_location_id = None
-                    st.session_state.location_name = None
-                    if hasattr(st, "rerun"):
-                        st.rerun()
-                    else:
-                        st.experimental_rerun()
+                    st.experimental_rerun()
+            
+            with col_nav2:
+                if st.button("📦 Relocation", 
+                           use_container_width=True,
+                           key="nav_relocation"):
+                    st.session_state.current_tab = "Bulk Relocation"
+                    st.experimental_rerun()
+            
+            # Highlight active tab
+            st.markdown(f"**Active Tab:** `{st.session_state.current_tab}`")
+            
+            st.markdown("---")
+            
+            st.markdown("### ⚡ Quick Actions")
+            col_act1, col_act2 = st.columns(2)
+            with col_act1:
+                if st.button("🔄 Refresh Cache", use_container_width=True, help="Clear cached data"):
+                    fetch_qc_list.clear()
+                    st.session_state.qc_data = None
+                    st.session_state.qc_selected = None
+                    st.success("✅ Cache cleared!")
+                    time.sleep(0.5)
+                    st.experimental_rerun()
+            with col_act2:
+                if st.button("🚪 Logout", use_container_width=True):
+                    # Clear all session state
+                    for key in list(st.session_state.keys()):
+                        del st.session_state[key]
+                    st.experimental_rerun()
             
             st.markdown("---")
             st.markdown("### 📊 System Info")
@@ -1069,11 +1044,11 @@ def main():
     # MAIN CONTENT AREA
     # ----------------------------------
     if not st.session_state.logged_in:
-        # HERO SECTION FOR LOGGED OUT STATE
+        # Hero Section for Logged Out State
         st.markdown("""
         <div class="hero-section">
             <div class="hero-title">📦 Odoo Operations Portal</div>
-            <div class="hero-subtitle">Professional Odoo Quality Control & Inventory Management</div>
+            <div class="hero-subtitle">QC Management & Bulk Relocation Platform</div>
         </div>
         """, unsafe_allow_html=True)
         
@@ -1084,33 +1059,30 @@ def main():
             st.info("👈 **Please log in** using the sidebar to access the dashboard")
             
             st.markdown("### ✨ Features")
-            col_a, col_b = st.columns(2)
-            with col_a:
-                st.markdown("**📊 QC Data Export**")
-                st.markdown("- Smart search")
-                st.markdown("- Live analytics")
-                st.markdown("- CSV/Excel export")
-            
-            with col_b:
-                st.markdown("**🚚 Bulk Relocation**")
-                st.markdown("- Manual location ID input")
-                st.markdown("- Location verification")
-                st.markdown("- Batch processing")
-                st.markdown("- Error reporting")
+            st.markdown("""
+            - **📊 QC Data Export** - Export and analyze quality control records
+            - **📦 Bulk Relocation** - Mass relocate lots to different locations
+            - **🔍 Smart Search** - Find records instantly with intelligent filtering
+            - **📈 Live Analytics** - Real-time data insights and metrics
+            - **📥 Multi-format Export** - Download data as CSV or Excel
+            - **🔒 Secure** - Enterprise-grade authentication and protection
+            - **⚡ Fast Processing** - Optimized for large datasets
+            """)
     
     else:
-        # DASHBOARD WITH TABS
+        # Dashboard with Tabs
         models = st.session_state.odoo_conn["models"]
         uid = st.session_state.odoo_conn["uid"]
         
-        # Create tabs
-        tab1, tab2 = st.tabs(["📊 QC Data Export", "🚚 Bulk Relocation"])
+        # Display current tab content
+        if st.session_state.current_tab == "QC Export":
+            show_qc_export_tab(models, uid)
+        else:  # Bulk Relocation
+            show_bulk_relocation_tab(models, uid)
         
-        with tab1:
-            tab_qc_export(models, uid)
-        
-        with tab2:
-            tab_bulk_relocation(models, uid)
+        # Footer
+        st.markdown("---")
+        st.caption(f"© {datetime.now().year} Odoo Operations Portal | Version 2.0 | Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 if __name__ == "__main__":
     main()
