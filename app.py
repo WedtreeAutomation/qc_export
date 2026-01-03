@@ -711,7 +711,7 @@ def show_bulk_relocation_tab(models, uid):
                 st.session_state.relocation_dest_id = DEST_LOCATION_ID
                 
                 # Trigger rerun to start processing
-                st.experimental_rerun()
+                st.rerun()
         
         with col2:
             if st.button("🔄 Reset", 
@@ -723,7 +723,7 @@ def show_bulk_relocation_tab(models, uid):
                 st.session_state.relocation_logs = []
                 if 'relocation_file' in st.session_state:
                     del st.session_state.relocation_file
-                st.experimental_rerun()
+                st.rerun()
         
         # Show processing status
         if st.session_state.relocation_processing:
@@ -863,7 +863,7 @@ def process_relocation_file(models, uid):
         st.session_state.relocation_processing = False
         
         # Force rerun to update UI
-        st.experimental_rerun()
+        st.rerun()
         
     except Exception as e:
         st.error(f"❌ Error during processing: {str(e)}")
@@ -976,7 +976,7 @@ def main():
                                 st.session_state.odoo_conn = conn
                                 st.success("✅ Login successful!")
                                 time.sleep(0.5)
-                                st.experimental_rerun()
+                                st.rerun()
                             else:
                                 st.error("❌ Odoo connection failed")
                     else:
@@ -1004,14 +1004,14 @@ def main():
                            use_container_width=True,
                            key="nav_qc"):
                     st.session_state.current_tab = "QC Export"
-                    st.experimental_rerun()
+                    st.rerun()
             
             with col_nav2:
                 if st.button("📦 Relocation", 
                            use_container_width=True,
                            key="nav_relocation"):
                     st.session_state.current_tab = "Bulk Relocation"
-                    st.experimental_rerun()
+                    st.rerun()
             
             # Highlight active tab
             st.markdown(f"**Active Tab:** `{st.session_state.current_tab}`")
@@ -1027,13 +1027,13 @@ def main():
                     st.session_state.qc_selected = None
                     st.success("✅ Cache cleared!")
                     time.sleep(0.5)
-                    st.experimental_rerun()
+                    st.rerun()
             with col_act2:
                 if st.button("🚪 Logout", use_container_width=True):
                     # Clear all session state
                     for key in list(st.session_state.keys()):
                         del st.session_state[key]
-                    st.experimental_rerun()
+                    st.rerun()
             
             st.markdown("---")
             st.markdown("### 📊 System Info")
