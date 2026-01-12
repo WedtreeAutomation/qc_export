@@ -1746,7 +1746,7 @@ def main():
             st.markdown("### ⚡ Quick Actions")
             col_act1, col_act2 = st.columns(2)
             with col_act1:
-                if st.button("🔄 Refresh Cache", use_container_width=True, help="Clear cached data"):
+                if st.button("🔄 Refresh", use_container_width=True, help="Clear cached data"):
                     fetch_qc_list.clear()
                     st.session_state.qc_data = None
                     st.session_state.qc_selected = None
