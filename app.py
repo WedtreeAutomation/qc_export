@@ -18,6 +18,7 @@ from dotenv import load_dotenv
 import time
 import io
 import xlsxwriter
+import traceback
 
 # Load environment variables
 load_dotenv()
@@ -58,6 +59,22 @@ def init_session_state():
         st.session_state.qc_selected = None
     if 'qc_data' not in st.session_state:
         st.session_state.qc_data = None
+    
+    # Company-Safe Relocation tab
+    if 'company_relocation_processing' not in st.session_state:
+        st.session_state.company_relocation_processing = False
+    if 'company_relocation_results' not in st.session_state:
+        st.session_state.company_relocation_results = None
+    if 'company_relocation_logs' not in st.session_state:
+        st.session_state.company_relocation_logs = []
+    
+    # Uncheck Ignored tab
+    if 'uncheck_processing' not in st.session_state:
+        st.session_state.uncheck_processing = False
+    if 'uncheck_results' not in st.session_state:
+        st.session_state.uncheck_results = None
+    if 'uncheck_logs' not in st.session_state:
+        st.session_state.uncheck_logs = []
 
 # ============================
 # MODERN CSS STYLING
@@ -393,7 +410,714 @@ def fetch_qc_list(_models, uid, password):
         return []
 
 # ============================
-# TAB 1: QC DATA EXPORT
+# TAB 3: COMPANY-SAFE BULK RELOCATION
+# ============================
+def show_company_safe_relocation_tab(models, uid):
+    """Display Company-Safe Bulk Relocation functionality"""
+    st.markdown("# 🏢 Company-Safe Bulk Relocation")
+    st.markdown("Relocate lots with company matching validation")
+    st.markdown("---")
+    
+    # Configuration Section
+    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+    st.markdown("### ⚙️ Configuration Settings")
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        source_locations = st.text_input(
+            "Source Location IDs",
+            value="278",
+            help="Enter comma-separated location IDs (e.g., 278,279,280)",
+            key="company_source_locations"
+        )
+    with col2:
+        dest_location_id = st.number_input(
+            "Destination Location ID",
+            min_value=1,
+            value=198,
+            help="Enter the ID of the destination location",
+            key="company_dest_location"
+        )
+    with col3:
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.info(f"📍 Moving to Location ID: **{dest_location_id}**")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # File Upload Section
+    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+    st.markdown("### 📤 Upload Excel File")
+    
+    uploaded_file = st.file_uploader(
+        "Choose an Excel file with 'Lot' column",
+        type=['xlsx', 'xls'],
+        help="Excel file must contain a column named 'Lot'",
+        key="company_relocation_uploader"
+    )
+    
+    if uploaded_file is not None:
+        try:
+            # Read and validate the Excel file
+            df = pd.read_excel(uploaded_file)
+            
+            if 'Lot' not in df.columns:
+                st.error("❌ Excel file must contain a column named 'Lot'")
+                st.markdown('</div>', unsafe_allow_html=True)
+                return
+            
+            # Display preview
+            st.markdown("### 📋 Data Preview")
+            st.dataframe(df.head(), use_container_width=True)
+            
+            # Statistics
+            st.markdown("### 📊 Statistics")
+            col_stats1, col_stats2 = st.columns(2)
+            with col_stats1:
+                st.metric("Total Lots", len(df))
+            with col_stats2:
+                st.metric("Unique Lots", df['Lot'].nunique())
+            
+            # Sample lots
+            st.markdown("### 🎯 Sample Lots")
+            st.code("\n".join(df['Lot'].dropna().head(10).astype(str).tolist()))
+            
+        except Exception as e:
+            st.error(f"Error reading file: {str(e)}")
+            st.markdown('</div>', unsafe_allow_html=True)
+            return
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Action Section
+    if uploaded_file is not None:
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.markdown("### 🚀 Actions")
+        
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            if st.button("▶️ Start Company-Safe Relocation", 
+                        type="primary",
+                        use_container_width=True,
+                        key="start_company_relocation"):
+                # Initialize processing state
+                st.session_state.company_relocation_processing = True
+                st.session_state.company_relocation_logs = []
+                st.session_state.company_relocation_results = None
+                
+                # Store uploaded file and config in session state
+                st.session_state.company_relocation_file = uploaded_file
+                st.session_state.company_source_locations_str = source_locations
+                st.session_state.company_dest_location_id = dest_location_id
+                
+                # Trigger rerun to start processing
+                st.experimental_rerun()
+        
+        with col2:
+            if st.button("🔄 Reset", 
+                        use_container_width=True,
+                        key="reset_company_relocation"):
+                # Clear relocation state
+                st.session_state.company_relocation_processing = False
+                st.session_state.company_relocation_results = None
+                st.session_state.company_relocation_logs = []
+                if 'company_relocation_file' in st.session_state:
+                    del st.session_state.company_relocation_file
+                st.experimental_rerun()
+        
+        # Show processing status
+        if st.session_state.company_relocation_processing:
+            st.warning("⏳ Processing in progress... Please wait.")
+            
+            # Process the file if we're in processing state
+            if 'company_relocation_file' in st.session_state:
+                process_company_safe_relocation(models, uid)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Display results if available
+    if (st.session_state.company_relocation_results is not None and 
+        not st.session_state.company_relocation_processing):
+        display_company_relocation_results()
+
+def process_company_safe_relocation(models, uid):
+    """Process company-safe relocation"""
+    try:
+        # Get configuration from session state
+        uploaded_file = st.session_state.company_relocation_file
+        source_locations_str = st.session_state.company_source_locations_str
+        DEST_LOCATION_ID = st.session_state.company_dest_location_id
+        
+        # Parse source locations
+        try:
+            SOURCE_LOCATION_IDS = [int(loc.strip()) for loc in source_locations_str.split(",") if loc.strip()]
+        except:
+            st.error("❌ Invalid source location IDs format")
+            st.session_state.company_relocation_processing = False
+            return
+        
+        # Read Excel file
+        df = pd.read_excel(uploaded_file)
+        LOT_COLUMN = "Lot"
+        lots = list(set(df[LOT_COLUMN].dropna().astype(str).tolist()))
+        
+        # Get destination company
+        try:
+            dest_location = models.execute_kw(
+                ODOO_DB, uid, ODOO_ADMIN_PASSWORD,
+                "stock.location", "read",
+                [DEST_LOCATION_ID],
+                {'fields': ['company_id']}
+            )
+            
+            if not dest_location:
+                st.error("❌ Destination location not found")
+                st.session_state.company_relocation_processing = False
+                return
+                
+            DEST_COMPANY_ID = dest_location[0]['company_id'][0] if dest_location[0]['company_id'] else None
+            if not DEST_COMPANY_ID:
+                st.error("❌ Destination location has no company assigned")
+                st.session_state.company_relocation_processing = False
+                return
+                
+        except Exception as e:
+            st.error(f"❌ Error fetching destination company: {str(e)}")
+            st.session_state.company_relocation_processing = False
+            return
+        
+        # Initialize counters and logs
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        
+        # Create initial log entry
+        log_entry = {
+            'timestamp': datetime.now().strftime("%H:%M:%S"),
+            'action': 'Started Processing',
+            'details': f'Processing {len(lots)} lots from locations {SOURCE_LOCATION_IDS} to {DEST_LOCATION_ID}'
+        }
+        st.session_state.company_relocation_logs.append(log_entry)
+        
+        # Fetch all quants for all lots
+        try:
+            status_text.text("🔍 Fetching quants from Odoo...")
+            
+            quant_records = models.execute_kw(
+                ODOO_DB, uid, ODOO_ADMIN_PASSWORD,
+                "stock.quant", "search_read",
+                [[
+                    ['lot_id.name', 'in', lots],
+                    ['location_id', 'in', SOURCE_LOCATION_IDS]
+                ]],
+                {
+                    'fields': ['id', 'lot_id', 'location_id', 'quantity', 'reserved_quantity', 'company_id'],
+                    'limit': 20000
+                }
+            )
+            
+            log_entry = {
+                'timestamp': datetime.now().strftime("%H:%M:%S"),
+                'action': 'Quants Fetched',
+                'details': f'Found {len(quant_records)} quants'
+            }
+            st.session_state.company_relocation_logs.append(log_entry)
+            
+        except Exception as e:
+            st.error(f"❌ Error fetching quants: {str(e)}")
+            st.session_state.company_relocation_processing = False
+            return
+        
+        # Filter quants
+        valid_quants = []
+        skipped = []
+        
+        status_text.text("🔍 Filtering valid quants...")
+        
+        for i, q in enumerate(quant_records):
+            # Update progress
+            progress = (i + 1) / len(quant_records)
+            progress_bar.progress(progress)
+            
+            qty = q.get('quantity', 0)
+            rqty = q.get('reserved_quantity', 0)
+            q_company = q['company_id'][0] if q['company_id'] else None
+            lot_name = q['lot_id'][1]
+            
+            # Check company match
+            if q_company != DEST_COMPANY_ID:
+                skipped.append((lot_name, f"Company mismatch (Source: {q_company}, Dest: {DEST_COMPANY_ID})"))
+                continue
+            
+            if qty <= 0:
+                skipped.append((lot_name, f"Invalid quantity = {qty}"))
+                continue
+            
+            if rqty > 0:
+                skipped.append((lot_name, f"Reserved quantity = {rqty}"))
+                continue
+            
+            valid_quants.append(q['id'])
+        
+        progress_bar.empty()
+        status_text.empty()
+        
+        # Create relocation wizard
+        if valid_quants:
+            try:
+                status_text.text("🚀 Creating relocation wizard...")
+                
+                ctx = {'action_ref': 'stock.action_view_inventory_tree'}
+                wizard_id = models.execute_kw(
+                    ODOO_DB, uid, ODOO_ADMIN_PASSWORD,
+                    'stock.quant.relocate', 'create',
+                    [{
+                        'quant_ids': [(6, 0, valid_quants)],
+                        'dest_location_id': DEST_LOCATION_ID,
+                        'message': "Bulk Company-Safe Relocation via Streamlit Portal",
+                    }],
+                    {'context': ctx}
+                )
+                
+                # Execute the move
+                status_text.text("⚡ Executing relocation...")
+                models.execute_kw(
+                    ODOO_DB, uid, ODOO_ADMIN_PASSWORD,
+                    'stock.quant.relocate', 'action_relocate_quants',
+                    [[wizard_id]],
+                    {'context': ctx}
+                )
+                
+                log_entry = {
+                    'timestamp': datetime.now().strftime("%H:%M:%S"),
+                    'action': 'Relocation Executed',
+                    'details': f'Moved {len(valid_quants)} quants to location {DEST_LOCATION_ID}'
+                }
+                st.session_state.company_relocation_logs.append(log_entry)
+                
+                status_text.empty()
+                
+            except Exception as e:
+                st.error(f"❌ Error during relocation: {str(e)}")
+                skipped.extend([(f"Quant ID {qid}", f"Relocation failed: {str(e)}") for qid in valid_quants])
+                valid_quants = []
+        
+        # Store results
+        st.session_state.company_relocation_results = {
+            'success': valid_quants,
+            'success_count': len(valid_quants),
+            'failed': skipped,
+            'total': len(lots),
+            'timestamp': datetime.now(),
+            'source_locations': SOURCE_LOCATION_IDS,
+            'dest_location': DEST_LOCATION_ID
+        }
+        
+        # Clear temporary file from session state
+        if 'company_relocation_file' in st.session_state:
+            del st.session_state.company_relocation_file
+        
+        # Update processing state
+        st.session_state.company_relocation_processing = False
+        
+        # Force rerun to update UI
+        st.experimental_rerun()
+        
+    except Exception as e:
+        st.error(f"❌ Error during processing: {str(e)}")
+        st.session_state.company_relocation_processing = False
+        if 'company_relocation_file' in st.session_state:
+            del st.session_state.company_relocation_file
+
+def display_company_relocation_results():
+    """Display company-safe relocation results"""
+    results = st.session_state.company_relocation_results
+    
+    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+    st.markdown("### 📊 Company-Safe Relocation Results")
+    
+    # Summary metrics
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Total Lots", results['total'])
+    with col2:
+        st.metric("Valid Quants", results['success_count'])
+    with col3:
+        success_rate = (results['success_count'] / len(results['failed']) * 100) if results['failed'] else 100
+        st.metric("Success Rate", f"{success_rate:.1f}%")
+    with col4:
+        failure_count = len(results['failed'])
+        st.metric("Skipped", failure_count, delta_color="inverse")
+    
+    st.markdown(f"**Source Locations:** `{results['source_locations']}` → **Destination:** `{results['dest_location']}`")
+    
+    # Detailed results in tabs
+    tab1, tab2, tab3 = st.tabs(["✅ Success Details", "❌ Skipped Details", "📋 Processing Logs"])
+    
+    with tab1:
+        if results['success_count'] > 0:
+            st.success(f"🎉 Successfully relocated {results['success_count']} quants")
+            st.info(f"📦 Moved from locations {results['source_locations']} to location {results['dest_location']}")
+        else:
+            st.info("No quants were successfully relocated.")
+    
+    with tab2:
+        if results['failed']:
+            failed_df = pd.DataFrame(results['failed'], columns=['Lot/Quant', 'Reason'])
+            st.dataframe(failed_df, use_container_width=True, height=400)
+            
+            # Download button
+            csv = failed_df.to_csv(index=False)
+            st.download_button(
+                label="📥 Download Skipped List",
+                data=csv,
+                file_name=f"skipped_relocation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                mime="text/csv",
+                use_container_width=True,
+                key="download_skipped_relocation"
+            )
+        else:
+            st.info("No lots were skipped during processing.")
+    
+    with tab3:
+        if st.session_state.company_relocation_logs:
+            log_df = pd.DataFrame(st.session_state.company_relocation_logs)
+            st.dataframe(log_df, use_container_width=True, height=300)
+        else:
+            st.info("No logs available.")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ============================
+# TAB 4: UNCHECK IGNORED
+# ============================
+def show_uncheck_ignored_tab(models, uid):
+    """Display Uncheck Ignored functionality"""
+    st.markdown("# 🔄 Uncheck Ignored QC Items")
+    st.markdown("Remove ignored status from QC lines")
+    st.markdown("---")
+    
+    # File Upload Section
+    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+    st.markdown("### 📤 Upload Excel File")
+    st.markdown("Excel file must contain columns: **QC_Name** and **Lot**")
+    
+    uploaded_file = st.file_uploader(
+        "Choose an Excel file",
+        type=['xlsx', 'xls'],
+        help="Required columns: QC_Name, Lot",
+        key="uncheck_ignored_uploader"
+    )
+    
+    if uploaded_file is not None:
+        try:
+            # Read and validate the Excel file
+            df = pd.read_excel(uploaded_file)
+            
+            # Check required columns
+            required_cols = {"QC_Name", "Lot"}
+            if not required_cols.issubset(df.columns):
+                st.error("❌ Excel must contain columns: QC_Name, Lot")
+                st.markdown('</div>', unsafe_allow_html=True)
+                return
+            
+            # Display preview
+            st.markdown("### 📋 Data Preview")
+            st.dataframe(df.head(), use_container_width=True)
+            
+            # Statistics
+            st.markdown("### 📊 Statistics")
+            col_stats1, col_stats2 = st.columns(2)
+            with col_stats1:
+                st.metric("Total Records", len(df))
+            with col_stats2:
+                st.metric("Unique QC References", df['QC_Name'].nunique())
+            
+            # Sample data
+            st.markdown("### 🎯 Sample Data")
+            st.code("\n".join([f"{row['QC_Name']} - {row['Lot']}" for _, row in df.head(5).iterrows()]))
+            
+        except Exception as e:
+            st.error(f"Error reading file: {str(e)}")
+            st.markdown('</div>', unsafe_allow_html=True)
+            return
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Action Section
+    if uploaded_file is not None:
+        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+        st.markdown("### 🚀 Actions")
+        
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            if st.button("▶️ Start Unchecking Ignored", 
+                        type="primary",
+                        use_container_width=True,
+                        key="start_uncheck_ignored"):
+                # Initialize processing state
+                st.session_state.uncheck_processing = True
+                st.session_state.uncheck_logs = []
+                st.session_state.uncheck_results = None
+                
+                # Store uploaded file in session state
+                st.session_state.uncheck_file = uploaded_file
+                
+                # Trigger rerun to start processing
+                st.experimental_rerun()
+        
+        with col2:
+            if st.button("🔄 Reset", 
+                        use_container_width=True,
+                        key="reset_uncheck"):
+                # Clear uncheck state
+                st.session_state.uncheck_processing = False
+                st.session_state.uncheck_results = None
+                st.session_state.uncheck_logs = []
+                if 'uncheck_file' in st.session_state:
+                    del st.session_state.uncheck_file
+                st.experimental_rerun()
+        
+        # Show processing status
+        if st.session_state.uncheck_processing:
+            st.warning("⏳ Processing in progress... Please wait.")
+            
+            # Process the file if we're in processing state
+            if 'uncheck_file' in st.session_state:
+                process_uncheck_ignored(models, uid)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Display results if available
+    if (st.session_state.uncheck_results is not None and 
+        not st.session_state.uncheck_processing):
+        display_uncheck_results()
+
+def process_uncheck_ignored(models, uid):
+    """Process uncheck ignored"""
+    try:
+        # Read the file for processing
+        uploaded_file = st.session_state.uncheck_file
+        df = pd.read_excel(uploaded_file)
+        
+        # Initialize results
+        processed = []
+        failed = []
+        not_found = []
+        
+        # Create progress bar and status
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        
+        # Process each row
+        total_rows = len(df)
+        
+        for index, row in df.iterrows():
+            QUALITY_CHECK_NAME = str(row["QC_Name"]).strip()
+            TARGET_LOT = str(row["Lot"]).strip()
+            
+            # Update progress
+            progress = (index + 1) / total_rows
+            progress_bar.progress(progress)
+            status_text.text(f"Processing {index + 1}/{total_rows}: {QUALITY_CHECK_NAME} - {TARGET_LOT}")
+            
+            # Log entry
+            log_entry = {
+                'timestamp': datetime.now().strftime("%H:%M:%S"),
+                'qc': QUALITY_CHECK_NAME,
+                'lot': TARGET_LOT,
+                'status': 'Processing',
+                'message': 'Started processing'
+            }
+            st.session_state.uncheck_logs.append(log_entry)
+            
+            try:
+                # 1. Search QC
+                qc_ids = models.execute_kw(
+                    ODOO_DB, uid, ODOO_ADMIN_PASSWORD,
+                    "stock.quantity.check", "search",
+                    [[("name", "=", QUALITY_CHECK_NAME)]]
+                )
+                
+                if not qc_ids:
+                    not_found.append((QUALITY_CHECK_NAME, TARGET_LOT, "QC not found"))
+                    log_entry['status'] = 'Failed'
+                    log_entry['message'] = 'QC not found in Odoo'
+                    continue
+                
+                qc_id = qc_ids[0]
+                
+                # 2. Read QC lines
+                qc_record = models.execute_kw(
+                    ODOO_DB, uid, ODOO_ADMIN_PASSWORD,
+                    "stock.quantity.check", "read",
+                    [qc_id],
+                    {"fields": ["qc_line_ids"]}
+                )[0]
+                
+                line_ids = qc_record.get("qc_line_ids", [])
+                
+                if not line_ids:
+                    not_found.append((QUALITY_CHECK_NAME, TARGET_LOT, "No lines in QC"))
+                    log_entry['status'] = 'Failed'
+                    log_entry['message'] = 'No lines inside QC'
+                    continue
+                
+                # 3. Read line details
+                lines = models.execute_kw(
+                    ODOO_DB, uid, ODOO_ADMIN_PASSWORD,
+                    "stock.quantity.check.line", "read",
+                    [line_ids],
+                    {"fields": ["id", "name", "ignored"]}
+                )
+                
+                target_line_id = None
+                
+                for line in lines:
+                    if str(line["name"]).strip().upper() == TARGET_LOT.upper():
+                        target_line_id = line["id"]
+                        break
+                
+                if not target_line_id:
+                    not_found.append((QUALITY_CHECK_NAME, TARGET_LOT, "Lot not found in QC"))
+                    log_entry['status'] = 'Failed'
+                    log_entry['message'] = 'Lot not found in QC'
+                    continue
+                
+                # 4. Update ignored=False
+                update_result = models.execute_kw(
+                    ODOO_DB, uid, ODOO_ADMIN_PASSWORD,
+                    "stock.quantity.check.line", "write",
+                    [[target_line_id], {"ignored": False}]
+                )
+                
+                if update_result:
+                    processed.append((QUALITY_CHECK_NAME, TARGET_LOT))
+                    log_entry['status'] = 'Success'
+                    log_entry['message'] = 'Successfully unchecked ignored'
+                else:
+                    failed.append((QUALITY_CHECK_NAME, TARGET_LOT, "Update failed"))
+                    log_entry['status'] = 'Failed'
+                    log_entry['message'] = 'Update failed in Odoo'
+                    
+            except Exception as e:
+                failed.append((QUALITY_CHECK_NAME, TARGET_LOT, str(e)))
+                log_entry['status'] = 'Failed'
+                log_entry['message'] = f'Exception: {str(e)}'
+        
+        # Clear progress indicators
+        progress_bar.empty()
+        status_text.empty()
+        
+        # Store results
+        st.session_state.uncheck_results = {
+            'processed': processed,
+            'failed': failed,
+            'not_found': not_found,
+            'total': total_rows,
+            'timestamp': datetime.now()
+        }
+        
+        # Clear temporary file from session state
+        if 'uncheck_file' in st.session_state:
+            del st.session_state.uncheck_file
+        
+        # Update processing state
+        st.session_state.uncheck_processing = False
+        
+        # Force rerun to update UI
+        st.experimental_rerun()
+        
+    except Exception as e:
+        st.error(f"❌ Error during processing: {str(e)}")
+        st.session_state.uncheck_processing = False
+        if 'uncheck_file' in st.session_state:
+            del st.session_state.uncheck_file
+
+def display_uncheck_results():
+    """Display uncheck ignored results"""
+    results = st.session_state.uncheck_results
+    
+    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+    st.markdown("### 📊 Uncheck Ignored Results")
+    
+    # Summary metrics
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Total Records", results['total'])
+    with col2:
+        st.metric("Processed", len(results['processed']))
+    with col3:
+        st.metric("Failed", len(results['failed']), delta_color="inverse")
+    with col4:
+        st.metric("Not Found", len(results['not_found']))
+    
+    # Detailed results in tabs
+    tab1, tab2, tab3, tab4 = st.tabs(["✅ Processed", "❌ Failed", "🔍 Not Found", "📋 Logs"])
+    
+    with tab1:
+        if results['processed']:
+            processed_df = pd.DataFrame(results['processed'], columns=['QC Name', 'Lot'])
+            st.dataframe(processed_df, use_container_width=True, height=400)
+            
+            # Download button
+            csv = processed_df.to_csv(index=False)
+            st.download_button(
+                label="📥 Download Processed List",
+                data=csv,
+                file_name=f"processed_uncheck_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                mime="text/csv",
+                use_container_width=True,
+                key="download_processed_uncheck"
+            )
+        else:
+            st.info("No records were processed.")
+    
+    with tab2:
+        if results['failed']:
+            failed_df = pd.DataFrame(results['failed'], columns=['QC Name', 'Lot', 'Error'])
+            st.dataframe(failed_df, use_container_width=True, height=400)
+            
+            # Download button
+            csv = failed_df.to_csv(index=False)
+            st.download_button(
+                label="📥 Download Failed List",
+                data=csv,
+                file_name=f"failed_uncheck_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                mime="text/csv",
+                use_container_width=True,
+                key="download_failed_uncheck"
+            )
+        else:
+            st.info("No failures occurred during processing.")
+    
+    with tab3:
+        if results['not_found']:
+            not_found_df = pd.DataFrame(results['not_found'], columns=['QC Name', 'Lot', 'Reason'])
+            st.dataframe(not_found_df, use_container_width=True, height=400)
+            
+            # Download button
+            csv = not_found_df.to_csv(index=False)
+            st.download_button(
+                label="📥 Download Not Found List",
+                data=csv,
+                file_name=f"notfound_uncheck_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                mime="text/csv",
+                use_container_width=True,
+                key="download_notfound_uncheck"
+            )
+        else:
+            st.info("All records were found in the system.")
+    
+    with tab4:
+        if st.session_state.uncheck_logs:
+            log_df = pd.DataFrame(st.session_state.uncheck_logs)
+            st.dataframe(log_df, use_container_width=True, height=400)
+        else:
+            st.info("No logs available.")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ============================
+# TAB 1: QC DATA EXPORT (EXISTING - KEPT AS IS)
 # ============================
 def show_qc_export_tab(models, uid):
     """Display QC Export functionality"""
@@ -619,7 +1343,7 @@ def show_qc_export_tab(models, uid):
                      key="refresh_qc_data")
 
 # ============================
-# TAB 2: BULK RELOCATION
+# TAB 2: BULK RELOCATION (EXISTING - KEPT AS IS)
 # ============================
 def show_bulk_relocation_tab(models, uid):
     """Display Bulk Relocation functionality"""
@@ -711,7 +1435,7 @@ def show_bulk_relocation_tab(models, uid):
                 st.session_state.relocation_dest_id = DEST_LOCATION_ID
                 
                 # Trigger rerun to start processing
-                st.rerun()
+                st.experimental_rerun()
         
         with col2:
             if st.button("🔄 Reset", 
@@ -723,7 +1447,7 @@ def show_bulk_relocation_tab(models, uid):
                 st.session_state.relocation_logs = []
                 if 'relocation_file' in st.session_state:
                     del st.session_state.relocation_file
-                st.rerun()
+                st.experimental_rerun()
         
         # Show processing status
         if st.session_state.relocation_processing:
@@ -863,7 +1587,7 @@ def process_relocation_file(models, uid):
         st.session_state.relocation_processing = False
         
         # Force rerun to update UI
-        st.rerun()
+        st.experimental_rerun()
         
     except Exception as e:
         st.error(f"❌ Error during processing: {str(e)}")
@@ -976,7 +1700,7 @@ def main():
                                 st.session_state.odoo_conn = conn
                                 st.success("✅ Login successful!")
                                 time.sleep(0.5)
-                                st.rerun()
+                                st.experimental_rerun()
                             else:
                                 st.error("❌ Odoo connection failed")
                     else:
@@ -998,20 +1722,21 @@ def main():
             st.markdown("### 📂 Navigation")
             
             # Navigation buttons
-            col_nav1, col_nav2 = st.columns(2)
-            with col_nav1:
-                if st.button("📊 QC Export", 
-                           use_container_width=True,
-                           key="nav_qc"):
-                    st.session_state.current_tab = "QC Export"
-                    st.rerun()
+            cols = st.columns(2)
+            tabs = [
+                ("📊 QC Export", "QC Export"),
+                ("📦 Relocation", "Bulk Relocation"),
+                ("🏢 Company-Safe", "Company-Safe Relocation"),
+                ("🔄 Uncheck", "Uncheck Ignored")
+            ]
             
-            with col_nav2:
-                if st.button("📦 Relocation", 
-                           use_container_width=True,
-                           key="nav_relocation"):
-                    st.session_state.current_tab = "Bulk Relocation"
-                    st.rerun()
+            for idx, (label, tab_name) in enumerate(tabs):
+                with cols[idx % 2]:
+                    if st.button(label, 
+                               use_container_width=True,
+                               key=f"nav_{tab_name.replace(' ', '_').lower()}"):
+                        st.session_state.current_tab = tab_name
+                        st.experimental_rerun()
             
             # Highlight active tab
             st.markdown(f"**Active Tab:** `{st.session_state.current_tab}`")
@@ -1027,13 +1752,13 @@ def main():
                     st.session_state.qc_selected = None
                     st.success("✅ Cache cleared!")
                     time.sleep(0.5)
-                    st.rerun()
+                    st.experimental_rerun()
             with col_act2:
                 if st.button("🚪 Logout", use_container_width=True):
                     # Clear all session state
                     for key in list(st.session_state.keys()):
                         del st.session_state[key]
-                    st.rerun()
+                    st.experimental_rerun()
             
             st.markdown("---")
             st.markdown("### 📊 System Info")
@@ -1062,6 +1787,8 @@ def main():
             st.markdown("""
             - **📊 QC Data Export** - Export and analyze quality control records
             - **📦 Bulk Relocation** - Mass relocate lots to different locations
+            - **🏢 Company-Safe Relocation** - Smart relocation with company matching
+            - **🔄 Uncheck Ignored** - Remove ignored status from QC items
             - **🔍 Smart Search** - Find records instantly with intelligent filtering
             - **📈 Live Analytics** - Real-time data insights and metrics
             - **📥 Multi-format Export** - Download data as CSV or Excel
@@ -1077,12 +1804,16 @@ def main():
         # Display current tab content
         if st.session_state.current_tab == "QC Export":
             show_qc_export_tab(models, uid)
-        else:  # Bulk Relocation
+        elif st.session_state.current_tab == "Bulk Relocation":
             show_bulk_relocation_tab(models, uid)
+        elif st.session_state.current_tab == "Company-Safe Relocation":
+            show_company_safe_relocation_tab(models, uid)
+        elif st.session_state.current_tab == "Uncheck Ignored":
+            show_uncheck_ignored_tab(models, uid)
         
         # Footer
         st.markdown("---")
-        st.caption(f"© {datetime.now().year} Odoo Operations Portal | Version 2.0 | Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        st.caption(f"© {datetime.now().year} Odoo Operations Portal | Version 3.0 | Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 if __name__ == "__main__":
     main()
