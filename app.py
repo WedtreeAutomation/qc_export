@@ -77,33 +77,13 @@ def init_session_state():
         st.session_state.uncheck_logs = []
 
 # ============================
-# MODERN CSS STYLING WITH PROFESSIONAL COLOR SCHEME
+# MODERN CSS STYLING
 # ============================
 def inject_custom_css():
     st.markdown("""
     <style>
         /* Import Google Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-        
-        /* CSS Variables for Color Scheme */
-        :root {
-            --primary: #2D5BFF;
-            --primary-dark: #1A44CC;
-            --primary-light: #E8EDFF;
-            --secondary: #8B5CF6;
-            --success: #10B981;
-            --warning: #F59E0B;
-            --error: #EF4444;
-            --info: #3B82F6;
-            --background: #F8FAFC;
-            --surface: #FFFFFF;
-            --text-primary: #1E293B;
-            --text-secondary: #64748B;
-            --border: #E2E8F0;
-            --shadow: 0 4px 20px rgba(45, 91, 255, 0.08);
-            --gradient-primary: linear-gradient(135deg, #2D5BFF 0%, #8B5CF6 100%);
-            --gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         /* Global Styles */
         * {
@@ -111,23 +91,21 @@ def inject_custom_css():
         }
         
         .stApp {
-            background-color: var(--background) !important;
-            color: var(--text-primary) !important;
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            color: #1e293b !important;
         }
         
         /* Header Styling */
         h1, h2, h3 {
-            color: var(--text-primary) !important;
+            color: #0f172a !important;
             font-weight: 700 !important;
-            font-family: 'Plus Jakarta Sans', sans-serif !important;
-            letter-spacing: -0.5px;
         }
         
         /* Sidebar Modern Design */
         section[data-testid="stSidebar"] {
-            background: var(--surface) !important;
-            border-right: 1px solid var(--border) !important;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.05) !important;
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+            border-right: 2px solid #e2e8f0;
+            box-shadow: 4px 0 12px rgba(0,0,0,0.03);
         }
         
         section[data-testid="stSidebar"] h1, 
@@ -136,503 +114,264 @@ def inject_custom_css():
         section[data-testid="stSidebar"] span, 
         section[data-testid="stSidebar"] p,
         section[data-testid="stSidebar"] label {
-            color: var(--text-primary) !important;
+            color: #1e293b !important;
         }
         
         /* Input Fields */
         .stTextInput input, .stSelectbox select, .stNumberInput input {
-            color: var(--text-primary) !important;
-            background-color: var(--surface) !important;
-            border: 1px solid var(--border) !important;
-            border-radius: 12px !important;
-            padding: 14px 16px !important;
+            color: #1e293b !important;
+            background-color: #ffffff !important;
+            border: 2px solid #e2e8f0 !important;
+            border-radius: 10px !important;
+            padding: 12px 16px !important;
             transition: all 0.3s ease !important;
             font-size: 14px !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03) !important;
         }
         
         .stTextInput input:focus, .stSelectbox select:focus, .stNumberInput input:focus {
-            border-color: var(--primary) !important;
-            box-shadow: 0 0 0 3px rgba(45, 91, 255, 0.1) !important;
-            outline: none !important;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
         }
         
         /* Buttons */
         .stButton button {
-            background: var(--gradient-primary) !important;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
             color: white !important;
             border: none !important;
-            border-radius: 12px !important;
-            padding: 14px 28px !important;
+            border-radius: 10px !important;
+            padding: 12px 24px !important;
             font-weight: 600 !important;
             font-size: 14px !important;
             transition: all 0.3s ease !important;
-            box-shadow: var(--shadow) !important;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
         }
         
         .stButton button:hover {
             transform: translateY(-2px) !important;
-            box-shadow: 0 8px 25px rgba(45, 91, 255, 0.15) !important;
-            background: linear-gradient(135deg, #1A44CC 0%, #7C3AED 100%) !important;
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4) !important;
         }
         
         /* Primary Action Button */
         .primary-button button {
-            background: var(--gradient-success) !important;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2) !important;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
         }
         
         .primary-button button:hover {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3) !important;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4) !important;
         }
         
         /* Danger Button */
         .danger-button button {
-            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%) !important;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2) !important;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
         }
         
         /* Cards */
         .metric-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 28px;
-            box-shadow: var(--shadow);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
         
         .metric-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(45, 91, 255, 0.12);
-            border-color: var(--primary-light);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-color: #3b82f6;
         }
         
         /* Metrics */
         [data-testid="stMetricValue"] {
-            font-size: 36px !important;
+            font-size: 32px !important;
             font-weight: 700 !important;
-            color: var(--primary) !important;
-            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            color: #3b82f6 !important;
         }
         
         [data-testid="stMetricLabel"] {
-            color: var(--text-secondary) !important;
-            font-size: 13px !important;
-            font-weight: 600 !important;
+            color: #64748b !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         
         /* Dataframe */
         .stDataFrame {
-            border-radius: 16px !important;
+            border-radius: 12px !important;
             overflow: hidden !important;
-            box-shadow: var(--shadow) !important;
-            border: 1px solid var(--border) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
         }
         
         /* Tabs */
         .stTabs [data-baseweb="tab-list"] {
-            gap: 4px;
-            background-color: var(--background);
-            padding: 8px;
-            border-radius: 16px;
+            gap: 8px;
         }
         
         .stTabs [data-baseweb="tab"] {
-            border-radius: 12px;
-            padding: 14px 28px;
+            border-radius: 10px 10px 0 0;
+            padding: 12px 24px;
             font-weight: 600;
-            background-color: transparent;
-            border: none;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
+            background-color: #f1f5f9;
+            border: 2px solid #e2e8f0;
         }
         
         .stTabs [aria-selected="true"] {
-            background-color: var(--surface) !important;
-            color: var(--primary) !important;
-            box-shadow: var(--shadow) !important;
+            background-color: #3b82f6 !important;
+            color: white !important;
+            border-color: #3b82f6 !important;
         }
         
         /* Success/Info/Warning Messages */
         .stSuccess, .stInfo, .stWarning, .stError {
-            border-radius: 16px !important;
-            border-left: none !important;
-            padding: 20px 24px !important;
-            box-shadow: var(--shadow) !important;
-            border: 1px solid !important;
+            border-radius: 12px !important;
+            border-left: 4px solid !important;
+            padding: 16px 20px !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
         }
         
         .stSuccess {
-            background-color: #F0FDF9 !important;
-            border-color: #10B981 !important;
-            color: #065F46 !important;
+            background-color: #f0fdf4 !important;
+            border-left-color: #22c55e !important;
+            color: #166534 !important;
         }
         
         .stInfo {
-            background-color: #EFF6FF !important;
-            border-color: var(--primary) !important;
-            color: #1E40AF !important;
+            background-color: #eff6ff !important;
+            border-left-color: #3b82f6 !important;
+            color: #1e40af !important;
         }
         
         .stWarning {
-            background-color: #FEFCE8 !important;
-            border-color: #F59E0B !important;
-            color: #92400E !important;
+            background-color: #fef3c7 !important;
+            border-left-color: #f59e0b !important;
+            color: #92400e !important;
         }
         
         .stError {
-            background-color: #FEF2F2 !important;
-            border-color: #EF4444 !important;
-            color: #991B1B !important;
+            background-color: #fef2f2 !important;
+            border-left-color: #ef4444 !important;
+            color: #991b1b !important;
         }
         
         /* Download Buttons */
         .stDownloadButton button {
-            background: var(--gradient-success) !important;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
             color: white !important;
             border: none !important;
-            border-radius: 12px !important;
-            padding: 14px 28px !important;
+            border-radius: 10px !important;
+            padding: 12px 24px !important;
             font-weight: 600 !important;
             transition: all 0.3s ease !important;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2) !important;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
         }
         
         .stDownloadButton button:hover {
             transform: translateY(-2px) !important;
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3) !important;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4) !important;
         }
         
         /* Spinner */
         .stSpinner > div {
-            border-top-color: var(--primary) !important;
+            border-top-color: #3b82f6 !important;
         }
         
         /* Hero Section */
         .hero-section {
             text-align: center;
-            padding: 100px 40px;
-            background: var(--gradient-primary);
-            border-radius: 32px;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
             color: white;
             margin: 20px 0;
-            box-shadow: 0 20px 60px rgba(45, 91, 255, 0.25);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
         }
         
         .hero-title {
-            font-size: 56px;
+            font-size: 48px;
             font-weight: 800;
             margin-bottom: 16px;
             color: white !important;
-            font-family: 'Plus Jakarta Sans', sans-serif;
         }
         
         .hero-subtitle {
-            font-size: 22px;
-            opacity: 0.95;
+            font-size: 20px;
+            opacity: 0.9;
             color: white !important;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
         }
         
         /* Login Card */
         .login-card {
-            background: var(--surface);
-            border-radius: 24px;
-            padding: 48px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            max-width: 450px;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
             margin: 40px auto;
-            border: 1px solid var(--border);
         }
         
         /* Sidebar User Badge */
         .user-badge {
-            background: var(--gradient-primary);
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
-            padding: 24px;
-            border-radius: 20px;
+            padding: 20px;
+            border-radius: 16px;
             text-align: center;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
         
         /* Status Badge */
         .status-badge {
             display: inline-block;
-            padding: 6px 16px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
-            background-color: var(--primary-light);
-            color: var(--primary);
         }
         
         .status-active {
-            background-color: #D1FAE5;
-            color: #065F46;
+            background-color: #dcfce7;
+            color: #166534;
         }
         
         .status-ignored {
-            background-color: #FEE2E2;
-            color: #991B1B;
+            background-color: #fee2e2;
+            color: #991b1b;
         }
         
         /* File Uploader */
         .stFileUploader {
-            border: 2px dashed var(--border) !important;
-            border-radius: 20px !important;
-            padding: 32px !important;
-            background-color: var(--surface) !important;
-            transition: all 0.3s ease !important;
+            border: 2px dashed #e2e8f0 !important;
+            border-radius: 12px !important;
+            padding: 20px !important;
+            background-color: #f8fafc !important;
         }
         
         .stFileUploader:hover {
-            border-color: var(--primary) !important;
-            background-color: var(--primary-light) !important;
+            border-color: #3b82f6 !important;
+            background-color: #eff6ff !important;
         }
         
         /* Divider */
         hr {
             border: none;
-            border-top: 1px solid var(--border);
-            margin: 32px 0;
+            border-top: 2px solid #e2e8f0;
+            margin: 24px 0;
         }
         
         /* Progress Bar */
         .stProgress > div > div > div > div {
-            background: var(--gradient-primary) !important;
-            border-radius: 10px;
-        }
-        
-        .stProgress > div > div {
-            background-color: var(--primary-light) !important;
-            border-radius: 10px;
-        }
-        
-        /* Tab Titles */
-        .tab-title {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: var(--text-primary);
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        
-        .tab-subtitle {
-            color: var(--text-secondary);
-            font-size: 16px;
-            margin-bottom: 32px;
-        }
-        
-        /* Card Headers */
-        .card-header {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: var(--text-primary);
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .card-header::before {
-            content: '';
-            width: 4px;
-            height: 24px;
-            background: var(--primary);
-            border-radius: 2px;
-        }
-        
-        /* Badge for Metrics */
-        .metric-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 6px 12px;
-            background: var(--primary-light);
-            color: var(--primary);
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-        
-        /* Navigation Cards in Sidebar */
-        .nav-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            margin-bottom: 12px;
-        }
-        
-        .nav-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--primary);
-            box-shadow: var(--shadow);
-        }
-        
-        .nav-card.active {
-            background: var(--primary-light);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        
-        /* Floating Action Button */
-        .fab {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--gradient-primary);
-            color: white;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 25px rgba(45, 91, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-        
-        .fab:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 35px rgba(45, 91, 255, 0.4);
-        }
-        
-        /* Table Styling */
-        .stDataFrame table {
-            border-radius: 16px;
-            overflow: hidden;
-        }
-        
-        .stDataFrame th {
-            background-color: var(--primary-light) !important;
-            color: var(--primary) !important;
-            font-weight: 600 !important;
-            padding: 16px !important;
-        }
-        
-        .stDataFrame td {
-            padding: 12px 16px !important;
-            border-bottom: 1px solid var(--border) !important;
-        }
-        
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--background);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-secondary);
-        }
-        
-        /* Code Block */
-        .stCode {
-            background-color: var(--surface) !important;
-            border: 1px solid var(--border) !important;
-            border-radius: 12px !important;
-            padding: 16px !important;
-        }
-        
-        /* Tooltip */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            background-color: var(--text-primary);
-            color: white;
-            text-align: center;
-            padding: 8px 12px;
-            border-radius: 8px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-        
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* Loading Animation */
-        @keyframes shimmer {
-            0% { background-position: -200px 0; }
-            100% { background-position: 200px 0; }
-        }
-        
-        .shimmer {
-            background: linear-gradient(90deg, var(--background) 0%, var(--surface) 50%, var(--background) 100%);
-            background-size: 200px 100%;
-            animation: shimmer 1.5s infinite;
-        }
-        
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: 36px;
-            }
-            
-            .hero-subtitle {
-                font-size: 18px;
-            }
-            
-            .metric-card {
-                padding: 20px;
-            }
-            
-            [data-testid="stMetricValue"] {
-                font-size: 28px !important;
-            }
-        }
-        
-        /* Watermark */
-        .watermark {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            color: var(--text-secondary);
-            opacity: 0.3;
-            font-size: 11px;
-            z-index: 999;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
         }
     </style>
     """, unsafe_allow_html=True)
 
 # ============================
-# BACKEND FUNCTIONS (UNCHANGED)
+# BACKEND FUNCTIONS
 # ============================
 @st.cache_resource(show_spinner=False)
 def get_odoo_connection():
@@ -671,16 +410,17 @@ def fetch_qc_list(_models, uid, password):
         return []
 
 # ============================
-# TAB 3: COMPANY-SAFE BULK RELOCATION (UNCHANGED)
+# TAB 3: COMPANY-SAFE BULK RELOCATION
 # ============================
 def show_company_safe_relocation_tab(models, uid):
     """Display Company-Safe Bulk Relocation functionality"""
-    st.markdown('<div class="tab-title">🏢 Company-Safe Bulk Relocation</div>', unsafe_allow_html=True)
-    st.markdown('<div class="tab-subtitle">Relocate lots with company matching validation for safe operations</div>', unsafe_allow_html=True)
+    st.markdown("# 🏢 Company-Safe Bulk Relocation")
+    st.markdown("Relocate lots with company matching validation")
+    st.markdown("---")
     
     # Configuration Section
     st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-header">⚙️ Configuration Settings</div>', unsafe_allow_html=True)
+    st.markdown("### ⚙️ Configuration Settings")
     
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -706,7 +446,7 @@ def show_company_safe_relocation_tab(models, uid):
     
     # File Upload Section
     st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-header">📤 Upload Excel File</div>', unsafe_allow_html=True)
+    st.markdown("### 📤 Upload Excel File")
     
     uploaded_file = st.file_uploader(
         "Choose an Excel file with 'Lot' column",
@@ -726,11 +466,11 @@ def show_company_safe_relocation_tab(models, uid):
                 return
             
             # Display preview
-            st.markdown('<div class="card-header">📋 Data Preview</div>', unsafe_allow_html=True)
+            st.markdown("### 📋 Data Preview")
             st.dataframe(df.head(), use_container_width=True)
             
             # Statistics
-            st.markdown('<div class="card-header">📊 Statistics</div>', unsafe_allow_html=True)
+            st.markdown("### 📊 Statistics")
             col_stats1, col_stats2 = st.columns(2)
             with col_stats1:
                 st.metric("Total Lots", len(df))
@@ -738,7 +478,7 @@ def show_company_safe_relocation_tab(models, uid):
                 st.metric("Unique Lots", df['Lot'].nunique())
             
             # Sample lots
-            st.markdown('<div class="card-header">🎯 Sample Lots</div>', unsafe_allow_html=True)
+            st.markdown("### 🎯 Sample Lots")
             st.code("\n".join(df['Lot'].dropna().head(10).astype(str).tolist()))
             
         except Exception as e:
@@ -751,7 +491,7 @@ def show_company_safe_relocation_tab(models, uid):
     # Action Section
     if uploaded_file is not None:
         st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown('<div class="card-header">🚀 Actions</div>', unsafe_allow_html=True)
+        st.markdown("### 🚀 Actions")
         
         col1, col2 = st.columns([1, 1])
         with col1:
@@ -992,7 +732,7 @@ def display_company_relocation_results():
     results = st.session_state.company_relocation_results
     
     st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-header">📊 Company-Safe Relocation Results</div>', unsafe_allow_html=True)
+    st.markdown("### 📊 Company-Safe Relocation Results")
     
     # Summary metrics
     col1, col2, col3, col4 = st.columns(4)
@@ -1047,16 +787,17 @@ def display_company_relocation_results():
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================
-# TAB 4: UNCHECK IGNORED (UNCHANGED)
+# TAB 4: UNCHECK IGNORED
 # ============================
 def show_uncheck_ignored_tab(models, uid):
     """Display Uncheck Ignored functionality"""
-    st.markdown('<div class="tab-title">🔄 Uncheck Ignored QC Items</div>', unsafe_allow_html=True)
-    st.markdown('<div class="tab-subtitle">Remove ignored status from QC lines for re-evaluation</div>', unsafe_allow_html=True)
+    st.markdown("# 🔄 Uncheck Ignored QC Items")
+    st.markdown("Remove ignored status from QC lines")
+    st.markdown("---")
     
     # File Upload Section
     st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-header">📤 Upload Excel File</div>', unsafe_allow_html=True)
+    st.markdown("### 📤 Upload Excel File")
     st.markdown("Excel file must contain columns: **QC_Name** and **Lot**")
     
     uploaded_file = st.file_uploader(
@@ -1079,11 +820,11 @@ def show_uncheck_ignored_tab(models, uid):
                 return
             
             # Display preview
-            st.markdown('<div class="card-header">📋 Data Preview</div>', unsafe_allow_html=True)
+            st.markdown("### 📋 Data Preview")
             st.dataframe(df.head(), use_container_width=True)
             
             # Statistics
-            st.markdown('<div class="card-header">📊 Statistics</div>', unsafe_allow_html=True)
+            st.markdown("### 📊 Statistics")
             col_stats1, col_stats2 = st.columns(2)
             with col_stats1:
                 st.metric("Total Records", len(df))
@@ -1091,7 +832,7 @@ def show_uncheck_ignored_tab(models, uid):
                 st.metric("Unique QC References", df['QC_Name'].nunique())
             
             # Sample data
-            st.markdown('<div class="card-header">🎯 Sample Data</div>', unsafe_allow_html=True)
+            st.markdown("### 🎯 Sample Data")
             st.code("\n".join([f"{row['QC_Name']} - {row['Lot']}" for _, row in df.head(5).iterrows()]))
             
         except Exception as e:
@@ -1104,7 +845,7 @@ def show_uncheck_ignored_tab(models, uid):
     # Action Section
     if uploaded_file is not None:
         st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown('<div class="card-header">🚀 Actions</div>', unsafe_allow_html=True)
+        st.markdown("### 🚀 Actions")
         
         col1, col2 = st.columns([1, 1])
         with col1:
@@ -1296,7 +1037,7 @@ def display_uncheck_results():
     results = st.session_state.uncheck_results
     
     st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-header">📊 Uncheck Ignored Results</div>', unsafe_allow_html=True)
+    st.markdown("### 📊 Uncheck Ignored Results")
     
     # Summary metrics
     col1, col2, col3, col4 = st.columns(4)
@@ -1376,16 +1117,17 @@ def display_uncheck_results():
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================
-# TAB 1: QC DATA EXPORT (MODIFIED UI)
+# TAB 1: QC DATA EXPORT (EXISTING - KEPT AS IS)
 # ============================
 def show_qc_export_tab(models, uid):
     """Display QC Export functionality"""
-    st.markdown('<div class="tab-title">📊 Quality Control Dashboard</div>', unsafe_allow_html=True)
-    st.markdown('<div class="tab-subtitle">Export and analyze QC data with comprehensive insights</div>', unsafe_allow_html=True)
+    st.markdown("# 📊 Quality Control Dashboard")
+    st.markdown("Export and analyze QC data with ease")
+    st.markdown("---")
     
     # Filter Section
     st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-header">🔍 Search QC Records</div>', unsafe_allow_html=True)
+    st.markdown("### 🔍 Search QC Records")
     
     with st.spinner("⏳ Loading QC records..."):
         qc_names = fetch_qc_list(models, uid, ODOO_ADMIN_PASSWORD)
@@ -1421,16 +1163,16 @@ def show_qc_export_tab(models, uid):
         try:
             with st.spinner(f"⏳ Fetching data for {selected_qc}..."):
                 qc_ids = models.execute_kw(ODOO_DB, uid, ODOO_ADMIN_PASSWORD, 
-                                         "stock.quantity.check", "search", 
-                                         [[("name", "=", selected_qc)]])
+                                          "stock.quantity.check", "search", 
+                                          [[("name", "=", selected_qc)]])
                 
                 if not qc_ids:
                     st.error("❌ Reference not found in database.")
                     return
                     
                 line_ids = models.execute_kw(ODOO_DB, uid, ODOO_ADMIN_PASSWORD, 
-                                           "stock.quantity.check.line", "search", 
-                                           [[("quantity_check_id", "=", qc_ids[0])]])
+                                            "stock.quantity.check.line", "search", 
+                                            [[("quantity_check_id", "=", qc_ids[0])]])
                 
                 if not line_ids:
                     st.info("⚠️ This QC reference has no product lines.")
@@ -1458,7 +1200,7 @@ def show_qc_export_tab(models, uid):
                     st.session_state.qc_selected = selected_qc
                     
                     # Analytics Overview
-                    st.markdown('<div class="card-header">📈 Analytics Overview</div>', unsafe_allow_html=True)
+                    st.markdown("### 📈 Analytics Overview")
                     m1, m2, m3, m4 = st.columns(4)
                     
                     with m1:
@@ -1484,12 +1226,13 @@ def show_qc_export_tab(models, uid):
                     st.markdown("<br>", unsafe_allow_html=True)
                     
                     # Detailed Records
-                    st.markdown('<div class="card-header">📋 Detailed Records</div>', unsafe_allow_html=True)
+                    st.markdown("### 📋 Detailed Records")
                     st.dataframe(df, height=400)
                     
                     # Export Options
                     st.markdown("---")
-                    st.markdown('<div class="card-header">📥 Export Options</div>', unsafe_allow_html=True)
+                    st.markdown("### 📥 Export Options")
+                    st.caption("Download your data in multiple formats")
                     
                     d1, d2, d3 = st.columns([1, 1, 2])
                     timestamp = datetime.now().strftime("%Y%m%d_%H%M")
@@ -1533,7 +1276,7 @@ def show_qc_export_tab(models, uid):
         st.info(f"📊 Showing cached data for: {selected_qc}")
         
         # Analytics Overview
-        st.markdown('<div class="card-header">📈 Analytics Overview</div>', unsafe_allow_html=True)
+        st.markdown("### 📈 Analytics Overview")
         m1, m2, m3, m4 = st.columns(4)
         
         with m1:
@@ -1559,12 +1302,12 @@ def show_qc_export_tab(models, uid):
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Detailed Records
-        st.markdown('<div class="card-header">📋 Detailed Records</div>', unsafe_allow_html=True)
+        st.markdown("### 📋 Detailed Records")
         st.dataframe(df, height=400)
         
         # Export Options
         st.markdown("---")
-        st.markdown('<div class="card-header">📥 Export Options</div>', unsafe_allow_html=True)
+        st.markdown("### 📥 Export Options")
         
         d1, d2, d3 = st.columns([1, 1, 2])
         timestamp = datetime.now().strftime("%Y%m%d_%H%M")
@@ -1600,16 +1343,17 @@ def show_qc_export_tab(models, uid):
                      key="refresh_qc_data")
 
 # ============================
-# TAB 2: BULK RELOCATION (MODIFIED UI)
+# TAB 2: BULK RELOCATION (EXISTING - KEPT AS IS)
 # ============================
 def show_bulk_relocation_tab(models, uid):
     """Display Bulk Relocation functionality"""
-    st.markdown('<div class="tab-title">📦 Bulk Relocation Tool</div>', unsafe_allow_html=True)
-    st.markdown('<div class="tab-subtitle">Mass relocate lots to destination locations efficiently</div>', unsafe_allow_html=True)
+    st.markdown("# 📦 Bulk Relocation Tool")
+    st.markdown("Mass relocate lots to destination locations")
+    st.markdown("---")
     
     # Destination Location Configuration
     st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-header">⚙️ Relocation Settings</div>', unsafe_allow_html=True)
+    st.markdown("### ⚙️ Relocation Settings")
     
     col1, col2 = st.columns(2)
     with col1:
@@ -1628,7 +1372,7 @@ def show_bulk_relocation_tab(models, uid):
     
     # File Upload Section
     st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-header">📤 Upload Excel File</div>', unsafe_allow_html=True)
+    st.markdown("### 📤 Upload Excel File")
     
     uploaded_file = st.file_uploader(
         "Choose an Excel file with 'Lot' column",
@@ -1648,11 +1392,11 @@ def show_bulk_relocation_tab(models, uid):
                 return
             
             # Display preview
-            st.markdown('<div class="card-header">📋 Data Preview</div>', unsafe_allow_html=True)
+            st.markdown("### 📋 Data Preview")
             st.dataframe(df.head(), use_container_width=True)
             
             # Statistics
-            st.markdown('<div class="card-header">📊 Statistics</div>', unsafe_allow_html=True)
+            st.markdown("### 📊 Statistics")
             col_stats1, col_stats2 = st.columns(2)
             with col_stats1:
                 st.metric("Total Lots", len(df))
@@ -1660,7 +1404,7 @@ def show_bulk_relocation_tab(models, uid):
                 st.metric("Unique Lots", df['Lot'].nunique())
             
             # Sample lots
-            st.markdown('<div class="card-header">🎯 Sample Lots</div>', unsafe_allow_html=True)
+            st.markdown("### 🎯 Sample Lots")
             st.code("\n".join(df['Lot'].dropna().head(10).astype(str).tolist()))
             
         except Exception as e:
@@ -1673,7 +1417,7 @@ def show_bulk_relocation_tab(models, uid):
     # Action Section
     if uploaded_file is not None:
         st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown('<div class="card-header">🚀 Actions</div>', unsafe_allow_html=True)
+        st.markdown("### 🚀 Actions")
         
         col1, col2 = st.columns([1, 1])
         with col1:
@@ -1856,7 +1600,7 @@ def display_relocation_results():
     results = st.session_state.relocation_results
     
     st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-header">📊 Processing Results</div>', unsafe_allow_html=True)
+    st.markdown("### 📊 Processing Results")
     
     # Summary metrics
     col1, col2, col3 = st.columns(3)
@@ -1976,34 +1720,26 @@ def main():
             """, unsafe_allow_html=True)
             
             st.markdown("### 📂 Navigation")
-            st.markdown("---")
             
-            # Navigation cards
+            # Navigation buttons
+            cols = st.columns(2)
             tabs = [
-                ("📊 QC Export", "QC Export", "#2D5BFF"),
-                ("📦 Relocation", "Bulk Relocation", "#8B5CF6"),
-                ("🏢 Company-Safe", "Company-Safe Relocation", "#10B981"),
-                ("🔄 Uncheck", "Uncheck Ignored", "#F59E0B")
+                ("📊 QC Export", "QC Export"),
+                ("📦 Relocation", "Bulk Relocation"),
+                ("🏢 Company-Safe", "Company-Safe Relocation"),
+                ("🔄 Uncheck", "Uncheck Ignored")
             ]
             
-            for label, tab_name, color in tabs:
-                is_active = st.session_state.current_tab == tab_name
-                active_class = "active" if is_active else ""
-                style = f"border-left: 4px solid {color};" if is_active else ""
-                
-                st.markdown(f"""
-                <div class="nav-card {active_class}" onclick="this.closest('form').querySelector('button').click()" style="{style}">
-                    <div style="font-size: 24px; margin-bottom: 8px;">{label.split()[0]}</div>
-                    <div style="font-size: 14px; font-weight: 600;">{label.split()[1] if len(label.split()) > 1 else ''}</div>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                if st.button(label, 
-                           use_container_width=True,
-                           key=f"nav_{tab_name.replace(' ', '_').lower()}",
-                           label_visibility="collapsed"):
-                    st.session_state.current_tab = tab_name
-                    st.rerun()
+            for idx, (label, tab_name) in enumerate(tabs):
+                with cols[idx % 2]:
+                    if st.button(label, 
+                               use_container_width=True,
+                               key=f"nav_{tab_name.replace(' ', '_').lower()}"):
+                        st.session_state.current_tab = tab_name
+                        st.rerun()
+            
+            # Highlight active tab
+            st.markdown(f"**Active Tab:** `{st.session_state.current_tab}`")
             
             st.markdown("---")
             
@@ -2037,40 +1773,28 @@ def main():
         st.markdown("""
         <div class="hero-section">
             <div class="hero-title">📦 Odoo Operations Portal</div>
-            <div class="hero-subtitle">Enterprise-grade QC Management & Bulk Relocation Platform</div>
-            <div style="margin-top: 30px; opacity: 0.9;">
-                👈 <strong>Please log in</strong> to access the dashboard
-            </div>
+            <div class="hero-subtitle">QC Management & Bulk Relocation Platform</div>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Features in cards
-        st.markdown("### ✨ Features")
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            st.markdown("##### 📊 QC Data Export")
-            st.markdown("Export and analyze quality control records with comprehensive insights")
-            st.markdown('</div>', unsafe_allow_html=True)
-            
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            st.markdown("##### 📦 Bulk Relocation")
-            st.markdown("Mass relocate lots to different locations efficiently")
-            st.markdown('</div>', unsafe_allow_html=True)
-            
+        col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            st.markdown("##### 🏢 Company-Safe Relocation")
-            st.markdown("Smart relocation with company matching validation")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.info("👈 **Please log in** using the sidebar to access the dashboard")
             
-            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            st.markdown("##### 🔄 Uncheck Ignored")
-            st.markdown("Remove ignored status from QC items for re-evaluation")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown("### ✨ Features")
+            st.markdown("""
+            - **📊 QC Data Export** - Export and analyze quality control records
+            - **📦 Bulk Relocation** - Mass relocate lots to different locations
+            - **🏢 Company-Safe Relocation** - Smart relocation with company matching
+            - **🔄 Uncheck Ignored** - Remove ignored status from QC items
+            - **🔍 Smart Search** - Find records instantly with intelligent filtering
+            - **📈 Live Analytics** - Real-time data insights and metrics
+            - **📥 Multi-format Export** - Download data as CSV or Excel
+            - **🔒 Secure** - Enterprise-grade authentication and protection
+            - **⚡ Fast Processing** - Optimized for large datasets
+            """)
     
     else:
         # Dashboard with Tabs
@@ -2089,13 +1813,7 @@ def main():
         
         # Footer
         st.markdown("---")
-        st.markdown(f"""
-        <div style="text-align: center; color: var(--text-secondary); font-size: 12px; padding: 20px;">
-            © {datetime.now().year} Odoo Operations Portal | Version 3.0 | Professional Edition
-            <br>
-            Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-        </div>
-        """, unsafe_allow_html=True)
+        st.caption(f"© {datetime.now().year} Odoo Operations Portal | Version 3.0 | Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 if __name__ == "__main__":
     main()
