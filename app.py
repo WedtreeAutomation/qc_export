@@ -77,7 +77,7 @@ def init_session_state():
         st.session_state.uncheck_logs = []
 
 # ============================
-# MODERN CSS STYLING
+# MODERN LIGHT THEME CSS STYLING
 # ============================
 def inject_custom_css():
     st.markdown("""
@@ -91,21 +91,20 @@ def inject_custom_css():
         }
         
         .stApp {
-            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-            color: #1e293b !important;
+            background: #ffffff !important;
+            color: #2d3748 !important;
         }
         
         /* Header Styling */
         h1, h2, h3 {
-            color: #0f172a !important;
-            font-weight: 700 !important;
+            color: #1a202c !important;
+            font-weight: 600 !important;
         }
         
-        /* Sidebar Modern Design */
+        /* Sidebar - Clean Professional */
         section[data-testid="stSidebar"] {
-            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
-            border-right: 2px solid #e2e8f0;
-            box-shadow: 4px 0 12px rgba(0,0,0,0.03);
+            background: #f9fafb !important;
+            border-right: 1px solid #e5e7eb !important;
         }
         
         section[data-testid="stSidebar"] h1, 
@@ -114,214 +113,181 @@ def inject_custom_css():
         section[data-testid="stSidebar"] span, 
         section[data-testid="stSidebar"] p,
         section[data-testid="stSidebar"] label {
-            color: #1e293b !important;
+            color: #374151 !important;
         }
         
-        /* Input Fields */
+        /* Input Fields - Clean */
         .stTextInput input, .stSelectbox select, .stNumberInput input {
-            color: #1e293b !important;
+            color: #374151 !important;
             background-color: #ffffff !important;
-            border: 2px solid #e2e8f0 !important;
-            border-radius: 10px !important;
-            padding: 12px 16px !important;
-            transition: all 0.3s ease !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 8px !important;
+            padding: 10px 14px !important;
+            transition: all 0.2s ease !important;
             font-size: 14px !important;
         }
         
         .stTextInput input:focus, .stSelectbox select:focus, .stNumberInput input:focus {
-            border-color: #3b82f6 !important;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
         }
         
-        /* Buttons */
+        /* Buttons - Professional */
         .stButton button {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+            background: #4f46e5 !important;
             color: white !important;
             border: none !important;
-            border-radius: 10px !important;
-            padding: 12px 24px !important;
-            font-weight: 600 !important;
+            border-radius: 8px !important;
+            padding: 10px 20px !important;
+            font-weight: 500 !important;
             font-size: 14px !important;
-            transition: all 0.3s ease !important;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+            transition: all 0.2s ease !important;
         }
         
         .stButton button:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4) !important;
+            background: #4338ca !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
         }
         
         /* Primary Action Button */
         .primary-button button {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+            background: #059669 !important;
         }
         
         .primary-button button:hover {
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4) !important;
+            background: #047857 !important;
         }
         
         /* Danger Button */
         .danger-button button {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+            background: #dc2626 !important;
         }
         
-        /* Cards */
+        /* Cards - Subtle Elevation */
         .metric-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
+            background: #ffffff !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 12px !important;
+            padding: 20px !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+            transition: all 0.2s ease !important;
+            margin-bottom: 16px !important;
         }
         
         .metric-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
         }
         
         /* Metrics */
         [data-testid="stMetricValue"] {
-            font-size: 32px !important;
-            font-weight: 700 !important;
-            color: #3b82f6 !important;
+            font-size: 28px !important;
+            font-weight: 600 !important;
+            color: #1e40af !important;
         }
         
         [data-testid="stMetricLabel"] {
-            color: #64748b !important;
-            font-size: 14px !important;
+            color: #6b7280 !important;
+            font-size: 13px !important;
             font-weight: 500 !important;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         
-        /* Dataframe */
+        /* Dataframe - Clean */
         .stDataFrame {
-            border-radius: 12px !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 8px !important;
             overflow: hidden !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
         }
         
-        /* Tabs */
+        /* Tabs - Subtle */
         .stTabs [data-baseweb="tab-list"] {
-            gap: 8px;
+            gap: 4px;
+            background: #f9fafb;
+            padding: 4px;
+            border-radius: 8px;
         }
         
         .stTabs [data-baseweb="tab"] {
-            border-radius: 10px 10px 0 0;
-            padding: 12px 24px;
-            font-weight: 600;
-            background-color: #f1f5f9;
-            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-weight: 500;
+            background-color: transparent;
+            border: none;
         }
         
         .stTabs [aria-selected="true"] {
-            background-color: #3b82f6 !important;
-            color: white !important;
-            border-color: #3b82f6 !important;
+            background-color: #ffffff !important;
+            color: #4f46e5 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
         
         /* Success/Info/Warning Messages */
         .stSuccess, .stInfo, .stWarning, .stError {
-            border-radius: 12px !important;
+            border-radius: 8px !important;
             border-left: 4px solid !important;
-            padding: 16px 20px !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+            padding: 14px 16px !important;
+            background-color: #f9fafb !important;
         }
         
         .stSuccess {
-            background-color: #f0fdf4 !important;
-            border-left-color: #22c55e !important;
-            color: #166534 !important;
+            border-left-color: #10b981 !important;
+            color: #065f46 !important;
         }
         
         .stInfo {
-            background-color: #eff6ff !important;
             border-left-color: #3b82f6 !important;
             color: #1e40af !important;
         }
         
         .stWarning {
-            background-color: #fef3c7 !important;
             border-left-color: #f59e0b !important;
             color: #92400e !important;
         }
         
         .stError {
-            background-color: #fef2f2 !important;
             border-left-color: #ef4444 !important;
             color: #991b1b !important;
         }
         
         /* Download Buttons */
         .stDownloadButton button {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            background: #059669 !important;
             color: white !important;
             border: none !important;
-            border-radius: 10px !important;
-            padding: 12px 24px !important;
-            font-weight: 600 !important;
-            transition: all 0.3s ease !important;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+            border-radius: 8px !important;
+            padding: 10px 20px !important;
+            font-weight: 500 !important;
         }
         
         .stDownloadButton button:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4) !important;
+            background: #047857 !important;
         }
         
         /* Spinner */
         .stSpinner > div {
-            border-top-color: #3b82f6 !important;
-        }
-        
-        /* Hero Section */
-        .hero-section {
-            text-align: center;
-            padding: 80px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            color: white;
-            margin: 20px 0;
-            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
-        }
-        
-        .hero-title {
-            font-size: 48px;
-            font-weight: 800;
-            margin-bottom: 16px;
-            color: white !important;
-        }
-        
-        .hero-subtitle {
-            font-size: 20px;
-            opacity: 0.9;
-            color: white !important;
+            border-top-color: #4f46e5 !important;
         }
         
         /* Login Card */
         .login-card {
             background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 32px;
+            border: 1px solid #e5e7eb;
             max-width: 400px;
             margin: 40px auto;
         }
         
         /* Sidebar User Badge */
         .user-badge {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 16px;
+            background: #ffffff;
+            color: #374151;
+            padding: 16px;
+            border-radius: 12px;
             text-align: center;
             margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            border: 1px solid #e5e7eb;
         }
         
         /* Status Badge */
@@ -330,12 +296,12 @@ def inject_custom_css():
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 500;
         }
         
         .status-active {
-            background-color: #dcfce7;
-            color: #166534;
+            background-color: #d1fae5;
+            color: #065f46;
         }
         
         .status-ignored {
@@ -345,27 +311,180 @@ def inject_custom_css():
         
         /* File Uploader */
         .stFileUploader {
-            border: 2px dashed #e2e8f0 !important;
-            border-radius: 12px !important;
+            border: 2px dashed #d1d5db !important;
+            border-radius: 8px !important;
             padding: 20px !important;
-            background-color: #f8fafc !important;
+            background-color: #f9fafb !important;
         }
         
         .stFileUploader:hover {
-            border-color: #3b82f6 !important;
-            background-color: #eff6ff !important;
+            border-color: #4f46e5 !important;
+            background-color: #f5f3ff !important;
         }
         
         /* Divider */
         hr {
             border: none;
-            border-top: 2px solid #e2e8f0;
+            border-top: 1px solid #e5e7eb;
             margin: 24px 0;
         }
         
         /* Progress Bar */
         .stProgress > div > div > div > div {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+            background: linear-gradient(90deg, #4f46e5 0%, #6366f1 100%) !important;
+        }
+        
+        /* Custom Hero Section */
+        .hero-section {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            color: white;
+            margin: 20px 0;
+        }
+        
+        .hero-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: white !important;
+        }
+        
+        .hero-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            color: white !important;
+        }
+        
+        /* Navigation Button Styling */
+        .sidebar-nav-button {
+            background: #ffffff !important;
+            color: #374151 !important;
+            border: 1px solid #e5e7eb !important;
+            margin-bottom: 8px !important;
+        }
+        
+        .sidebar-nav-button:hover {
+            background: #f5f3ff !important;
+            border-color: #4f46e5 !important;
+            color: #4f46e5 !important;
+        }
+        
+        /* Active Navigation */
+        .sidebar-nav-active {
+            background: #f5f3ff !important;
+            color: #4f46e5 !important;
+            border-color: #4f46e5 !important;
+        }
+        
+        /* Table Styling */
+        .stDataFrame tbody tr:nth-child(even) {
+            background-color: #f9fafb !important;
+        }
+        
+        .stDataFrame tbody tr:hover {
+            background-color: #f5f3ff !important;
+        }
+        
+        /* Card Headers */
+        .card-header {
+            color: #374151 !important;
+            font-weight: 600 !important;
+            font-size: 16px !important;
+            margin-bottom: 12px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+        
+        /* Code Blocks */
+        .stCode {
+            background: #f9fafb !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 6px !important;
+            padding: 12px !important;
+        }
+        
+        /* Badge Colors */
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        /* Subtle Shadows */
+        .shadow-sm {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+        }
+        
+        .shadow-md {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
+        }
+        
+        /* Text Colors */
+        .text-primary {
+            color: #4f46e5 !important;
+        }
+        
+        .text-secondary {
+            color: #6b7280 !important;
+        }
+        
+        .text-success {
+            color: #059669 !important;
+        }
+        
+        /* Background Colors */
+        .bg-gray-50 {
+            background-color: #f9fafb !important;
+        }
+        
+        .bg-gray-100 {
+            background-color: #f3f4f6 !important;
+        }
+        
+        /* Border Colors */
+        .border-gray-200 {
+            border-color: #e5e7eb !important;
+        }
+        
+        /* Icon Colors */
+        .icon-blue {
+            color: #3b82f6 !important;
+        }
+        
+        .icon-purple {
+            color: #8b5cf6 !important;
+        }
+        
+        .icon-green {
+            color: #10b981 !important;
+        }
+        
+        .icon-orange {
+            color: #f59e0b !important;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -414,125 +533,128 @@ def fetch_qc_list(_models, uid, password):
 # ============================
 def show_company_safe_relocation_tab(models, uid):
     """Display Company-Safe Bulk Relocation functionality"""
-    st.markdown("# 🏢 Company-Safe Bulk Relocation")
+    st.markdown("## 🏢 Company-Safe Bulk Relocation")
     st.markdown("Relocate lots with company matching validation")
     st.markdown("---")
     
     # Configuration Section
-    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown("### ⚙️ Configuration Settings")
-    
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        source_locations = st.text_input(
-            "Source Location IDs",
-            value="278",
-            help="Enter comma-separated location IDs (e.g., 278,279,280)",
-            key="company_source_locations"
-        )
-    with col2:
-        dest_location_id = st.number_input(
-            "Destination Location ID",
-            min_value=1,
-            value=198,
-            help="Enter the ID of the destination location",
-            key="company_dest_location"
-        )
-    with col3:
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.info(f"📍 Moving to Location ID: **{dest_location_id}**")
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container():
+        st.markdown('<div class="metric-card shadow-sm">', unsafe_allow_html=True)
+        st.markdown("### ⚙️ Configuration Settings")
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            source_locations = st.text_input(
+                "Source Location IDs",
+                value="278",
+                help="Enter comma-separated location IDs (e.g., 278,279,280)",
+                key="company_source_locations"
+            )
+        with col2:
+            dest_location_id = st.number_input(
+                "Destination Location ID",
+                min_value=1,
+                value=198,
+                help="Enter the ID of the destination location",
+                key="company_dest_location"
+            )
+        with col3:
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.info(f"📍 Moving to Location ID: **{dest_location_id}**")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
     
     # File Upload Section
-    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown("### 📤 Upload Excel File")
-    
-    uploaded_file = st.file_uploader(
-        "Choose an Excel file with 'Lot' column",
-        type=['xlsx', 'xls'],
-        help="Excel file must contain a column named 'Lot'",
-        key="company_relocation_uploader"
-    )
-    
-    if uploaded_file is not None:
-        try:
-            # Read and validate the Excel file
-            df = pd.read_excel(uploaded_file)
-            
-            if 'Lot' not in df.columns:
-                st.error("❌ Excel file must contain a column named 'Lot'")
+    with st.container():
+        st.markdown('<div class="metric-card shadow-sm">', unsafe_allow_html=True)
+        st.markdown("### 📤 Upload Excel File")
+        
+        uploaded_file = st.file_uploader(
+            "Choose an Excel file with 'Lot' column",
+            type=['xlsx', 'xls'],
+            help="Excel file must contain a column named 'Lot'",
+            key="company_relocation_uploader"
+        )
+        
+        if uploaded_file is not None:
+            try:
+                # Read and validate the Excel file
+                df = pd.read_excel(uploaded_file)
+                
+                if 'Lot' not in df.columns:
+                    st.error("❌ Excel file must contain a column named 'Lot'")
+                    st.markdown('</div>', unsafe_allow_html=True)
+                    return
+                
+                # Display preview
+                st.markdown("### 📋 Data Preview")
+                st.dataframe(df.head(), use_container_width=True)
+                
+                # Statistics
+                st.markdown("### 📊 Statistics")
+                col_stats1, col_stats2 = st.columns(2)
+                with col_stats1:
+                    st.metric("Total Lots", len(df))
+                with col_stats2:
+                    st.metric("Unique Lots", df['Lot'].nunique())
+                
+                # Sample lots
+                st.markdown("### 🎯 Sample Lots")
+                st.code("\n".join(df['Lot'].dropna().head(10).astype(str).tolist()))
+                
+            except Exception as e:
+                st.error(f"Error reading file: {str(e)}")
                 st.markdown('</div>', unsafe_allow_html=True)
                 return
-            
-            # Display preview
-            st.markdown("### 📋 Data Preview")
-            st.dataframe(df.head(), use_container_width=True)
-            
-            # Statistics
-            st.markdown("### 📊 Statistics")
-            col_stats1, col_stats2 = st.columns(2)
-            with col_stats1:
-                st.metric("Total Lots", len(df))
-            with col_stats2:
-                st.metric("Unique Lots", df['Lot'].nunique())
-            
-            # Sample lots
-            st.markdown("### 🎯 Sample Lots")
-            st.code("\n".join(df['Lot'].dropna().head(10).astype(str).tolist()))
-            
-        except Exception as e:
-            st.error(f"Error reading file: {str(e)}")
-            st.markdown('</div>', unsafe_allow_html=True)
-            return
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
     
     # Action Section
     if uploaded_file is not None:
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown("### 🚀 Actions")
-        
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            if st.button("▶️ Start Company-Safe Relocation", 
-                        type="primary",
-                        use_container_width=True,
-                        key="start_company_relocation"):
-                # Initialize processing state
-                st.session_state.company_relocation_processing = True
-                st.session_state.company_relocation_logs = []
-                st.session_state.company_relocation_results = None
-                
-                # Store uploaded file and config in session state
-                st.session_state.company_relocation_file = uploaded_file
-                st.session_state.company_source_locations_str = source_locations
-                st.session_state.company_dest_location_id = dest_location_id
-                
-                # Trigger rerun to start processing
-                st.rerun()
-        
-        with col2:
-            if st.button("🔄 Reset", 
-                        use_container_width=True,
-                        key="reset_company_relocation"):
-                # Clear relocation state
-                st.session_state.company_relocation_processing = False
-                st.session_state.company_relocation_results = None
-                st.session_state.company_relocation_logs = []
-                if 'company_relocation_file' in st.session_state:
-                    del st.session_state.company_relocation_file
-                st.rerun()
-        
-        # Show processing status
-        if st.session_state.company_relocation_processing:
-            st.warning("⏳ Processing in progress... Please wait.")
+        with st.container():
+            st.markdown('<div class="metric-card shadow-sm">', unsafe_allow_html=True)
+            st.markdown("### 🚀 Actions")
             
-            # Process the file if we're in processing state
-            if 'company_relocation_file' in st.session_state:
-                process_company_safe_relocation(models, uid)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                if st.button("▶️ Start Company-Safe Relocation", 
+                            type="primary",
+                            use_container_width=True,
+                            key="start_company_relocation"):
+                    # Initialize processing state
+                    st.session_state.company_relocation_processing = True
+                    st.session_state.company_relocation_logs = []
+                    st.session_state.company_relocation_results = None
+                    
+                    # Store uploaded file and config in session state
+                    st.session_state.company_relocation_file = uploaded_file
+                    st.session_state.company_source_locations_str = source_locations
+                    st.session_state.company_dest_location_id = dest_location_id
+                    
+                    # Trigger rerun to start processing
+                    st.rerun()
+            
+            with col2:
+                if st.button("🔄 Reset", 
+                            use_container_width=True,
+                            key="reset_company_relocation"):
+                    # Clear relocation state
+                    st.session_state.company_relocation_processing = False
+                    st.session_state.company_relocation_results = None
+                    st.session_state.company_relocation_logs = []
+                    if 'company_relocation_file' in st.session_state:
+                        del st.session_state.company_relocation_file
+                    st.rerun()
+            
+            # Show processing status
+            if st.session_state.company_relocation_processing:
+                st.warning("⏳ Processing in progress... Please wait.")
+                
+                # Process the file if we're in processing state
+                if 'company_relocation_file' in st.session_state:
+                    process_company_safe_relocation(models, uid)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
     
     # Display results if available
     if (st.session_state.company_relocation_results is not None and 
@@ -731,160 +853,163 @@ def display_company_relocation_results():
     """Display company-safe relocation results"""
     results = st.session_state.company_relocation_results
     
-    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown("### 📊 Company-Safe Relocation Results")
-    
-    # Summary metrics
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric("Total Lots", results['total'])
-    with col2:
-        st.metric("Valid Quants", results['success_count'])
-    with col3:
-        success_rate = (results['success_count'] / len(results['failed']) * 100) if results['failed'] else 100
-        st.metric("Success Rate", f"{success_rate:.1f}%")
-    with col4:
-        failure_count = len(results['failed'])
-        st.metric("Skipped", failure_count, delta_color="inverse")
-    
-    st.markdown(f"**Source Locations:** `{results['source_locations']}` → **Destination:** `{results['dest_location']}`")
-    
-    # Detailed results in tabs
-    tab1, tab2, tab3 = st.tabs(["✅ Success Details", "❌ Skipped Details", "📋 Processing Logs"])
-    
-    with tab1:
-        if results['success_count'] > 0:
-            st.success(f"🎉 Successfully relocated {results['success_count']} quants")
-            st.info(f"📦 Moved from locations {results['source_locations']} to location {results['dest_location']}")
-        else:
-            st.info("No quants were successfully relocated.")
-    
-    with tab2:
-        if results['failed']:
-            failed_df = pd.DataFrame(results['failed'], columns=['Lot/Quant', 'Reason'])
-            st.dataframe(failed_df, use_container_width=True, height=400)
-            
-            # Download button
-            csv = failed_df.to_csv(index=False)
-            st.download_button(
-                label="📥 Download Skipped List",
-                data=csv,
-                file_name=f"skipped_relocation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                mime="text/csv",
-                use_container_width=True,
-                key="download_skipped_relocation"
-            )
-        else:
-            st.info("No lots were skipped during processing.")
-    
-    with tab3:
-        if st.session_state.company_relocation_logs:
-            log_df = pd.DataFrame(st.session_state.company_relocation_logs)
-            st.dataframe(log_df, use_container_width=True, height=300)
-        else:
-            st.info("No logs available.")
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container():
+        st.markdown('<div class="metric-card shadow-sm">', unsafe_allow_html=True)
+        st.markdown("### 📊 Company-Safe Relocation Results")
+        
+        # Summary metrics
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("Total Lots", results['total'])
+        with col2:
+            st.metric("Valid Quants", results['success_count'])
+        with col3:
+            success_rate = (results['success_count'] / len(results['failed']) * 100) if results['failed'] else 100
+            st.metric("Success Rate", f"{success_rate:.1f}%")
+        with col4:
+            failure_count = len(results['failed'])
+            st.metric("Skipped", failure_count, delta_color="inverse")
+        
+        st.markdown(f"**Source Locations:** `{results['source_locations']}` → **Destination:** `{results['dest_location']}`")
+        
+        # Detailed results in tabs
+        tab1, tab2, tab3 = st.tabs(["✅ Success Details", "❌ Skipped Details", "📋 Processing Logs"])
+        
+        with tab1:
+            if results['success_count'] > 0:
+                st.success(f"🎉 Successfully relocated {results['success_count']} quants")
+                st.info(f"📦 Moved from locations {results['source_locations']} to location {results['dest_location']}")
+            else:
+                st.info("No quants were successfully relocated.")
+        
+        with tab2:
+            if results['failed']:
+                failed_df = pd.DataFrame(results['failed'], columns=['Lot/Quant', 'Reason'])
+                st.dataframe(failed_df, use_container_width=True, height=400)
+                
+                # Download button
+                csv = failed_df.to_csv(index=False)
+                st.download_button(
+                    label="📥 Download Skipped List",
+                    data=csv,
+                    file_name=f"skipped_relocation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                    mime="text/csv",
+                    use_container_width=True,
+                    key="download_skipped_relocation"
+                )
+            else:
+                st.info("No lots were skipped during processing.")
+        
+        with tab3:
+            if st.session_state.company_relocation_logs:
+                log_df = pd.DataFrame(st.session_state.company_relocation_logs)
+                st.dataframe(log_df, use_container_width=True, height=300)
+            else:
+                st.info("No logs available.")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================
 # TAB 4: UNCHECK IGNORED
 # ============================
 def show_uncheck_ignored_tab(models, uid):
     """Display Uncheck Ignored functionality"""
-    st.markdown("# 🔄 Uncheck Ignored QC Items")
+    st.markdown("## 🔄 Uncheck Ignored QC Items")
     st.markdown("Remove ignored status from QC lines")
     st.markdown("---")
     
     # File Upload Section
-    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown("### 📤 Upload Excel File")
-    st.markdown("Excel file must contain columns: **QC_Name** and **Lot**")
-    
-    uploaded_file = st.file_uploader(
-        "Choose an Excel file",
-        type=['xlsx', 'xls'],
-        help="Required columns: QC_Name, Lot",
-        key="uncheck_ignored_uploader"
-    )
-    
-    if uploaded_file is not None:
-        try:
-            # Read and validate the Excel file
-            df = pd.read_excel(uploaded_file)
-            
-            # Check required columns
-            required_cols = {"QC_Name", "Lot"}
-            if not required_cols.issubset(df.columns):
-                st.error("❌ Excel must contain columns: QC_Name, Lot")
+    with st.container():
+        st.markdown('<div class="metric-card shadow-sm">', unsafe_allow_html=True)
+        st.markdown("### 📤 Upload Excel File")
+        st.markdown("Excel file must contain columns: **QC_Name** and **Lot**")
+        
+        uploaded_file = st.file_uploader(
+            "Choose an Excel file",
+            type=['xlsx', 'xls'],
+            help="Required columns: QC_Name, Lot",
+            key="uncheck_ignored_uploader"
+        )
+        
+        if uploaded_file is not None:
+            try:
+                # Read and validate the Excel file
+                df = pd.read_excel(uploaded_file)
+                
+                # Check required columns
+                required_cols = {"QC_Name", "Lot"}
+                if not required_cols.issubset(df.columns):
+                    st.error("❌ Excel must contain columns: QC_Name, Lot")
+                    st.markdown('</div>', unsafe_allow_html=True)
+                    return
+                
+                # Display preview
+                st.markdown("### 📋 Data Preview")
+                st.dataframe(df.head(), use_container_width=True)
+                
+                # Statistics
+                st.markdown("### 📊 Statistics")
+                col_stats1, col_stats2 = st.columns(2)
+                with col_stats1:
+                    st.metric("Total Records", len(df))
+                with col_stats2:
+                    st.metric("Unique QC References", df['QC_Name'].nunique())
+                
+                # Sample data
+                st.markdown("### 🎯 Sample Data")
+                st.code("\n".join([f"{row['QC_Name']} - {row['Lot']}" for _, row in df.head(5).iterrows()]))
+                
+            except Exception as e:
+                st.error(f"Error reading file: {str(e)}")
                 st.markdown('</div>', unsafe_allow_html=True)
                 return
-            
-            # Display preview
-            st.markdown("### 📋 Data Preview")
-            st.dataframe(df.head(), use_container_width=True)
-            
-            # Statistics
-            st.markdown("### 📊 Statistics")
-            col_stats1, col_stats2 = st.columns(2)
-            with col_stats1:
-                st.metric("Total Records", len(df))
-            with col_stats2:
-                st.metric("Unique QC References", df['QC_Name'].nunique())
-            
-            # Sample data
-            st.markdown("### 🎯 Sample Data")
-            st.code("\n".join([f"{row['QC_Name']} - {row['Lot']}" for _, row in df.head(5).iterrows()]))
-            
-        except Exception as e:
-            st.error(f"Error reading file: {str(e)}")
-            st.markdown('</div>', unsafe_allow_html=True)
-            return
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
     
     # Action Section
     if uploaded_file is not None:
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown("### 🚀 Actions")
-        
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            if st.button("▶️ Start Unchecking Ignored", 
-                        type="primary",
-                        use_container_width=True,
-                        key="start_uncheck_ignored"):
-                # Initialize processing state
-                st.session_state.uncheck_processing = True
-                st.session_state.uncheck_logs = []
-                st.session_state.uncheck_results = None
-                
-                # Store uploaded file in session state
-                st.session_state.uncheck_file = uploaded_file
-                
-                # Trigger rerun to start processing
-                st.rerun()
-        
-        with col2:
-            if st.button("🔄 Reset", 
-                        use_container_width=True,
-                        key="reset_uncheck"):
-                # Clear uncheck state
-                st.session_state.uncheck_processing = False
-                st.session_state.uncheck_results = None
-                st.session_state.uncheck_logs = []
-                if 'uncheck_file' in st.session_state:
-                    del st.session_state.uncheck_file
-                st.rerun()
-        
-        # Show processing status
-        if st.session_state.uncheck_processing:
-            st.warning("⏳ Processing in progress... Please wait.")
+        with st.container():
+            st.markdown('<div class="metric-card shadow-sm">', unsafe_allow_html=True)
+            st.markdown("### 🚀 Actions")
             
-            # Process the file if we're in processing state
-            if 'uncheck_file' in st.session_state:
-                process_uncheck_ignored(models, uid)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                if st.button("▶️ Start Unchecking Ignored", 
+                            type="primary",
+                            use_container_width=True,
+                            key="start_uncheck_ignored"):
+                    # Initialize processing state
+                    st.session_state.uncheck_processing = True
+                    st.session_state.uncheck_logs = []
+                    st.session_state.uncheck_results = None
+                    
+                    # Store uploaded file in session state
+                    st.session_state.uncheck_file = uploaded_file
+                    
+                    # Trigger rerun to start processing
+                    st.rerun()
+            
+            with col2:
+                if st.button("🔄 Reset", 
+                            use_container_width=True,
+                            key="reset_uncheck"):
+                    # Clear uncheck state
+                    st.session_state.uncheck_processing = False
+                    st.session_state.uncheck_results = None
+                    st.session_state.uncheck_logs = []
+                    if 'uncheck_file' in st.session_state:
+                        del st.session_state.uncheck_file
+                    st.rerun()
+            
+            # Show processing status
+            if st.session_state.uncheck_processing:
+                st.warning("⏳ Processing in progress... Please wait.")
+                
+                # Process the file if we're in processing state
+                if 'uncheck_file' in st.session_state:
+                    process_uncheck_ignored(models, uid)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
     
     # Display results if available
     if (st.session_state.uncheck_results is not None and 
@@ -1036,127 +1161,129 @@ def display_uncheck_results():
     """Display uncheck ignored results"""
     results = st.session_state.uncheck_results
     
-    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown("### 📊 Uncheck Ignored Results")
-    
-    # Summary metrics
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric("Total Records", results['total'])
-    with col2:
-        st.metric("Processed", len(results['processed']))
-    with col3:
-        st.metric("Failed", len(results['failed']), delta_color="inverse")
-    with col4:
-        st.metric("Not Found", len(results['not_found']))
-    
-    # Detailed results in tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["✅ Processed", "❌ Failed", "🔍 Not Found", "📋 Logs"])
-    
-    with tab1:
-        if results['processed']:
-            processed_df = pd.DataFrame(results['processed'], columns=['QC Name', 'Lot'])
-            st.dataframe(processed_df, use_container_width=True, height=400)
-            
-            # Download button
-            csv = processed_df.to_csv(index=False)
-            st.download_button(
-                label="📥 Download Processed List",
-                data=csv,
-                file_name=f"processed_uncheck_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                mime="text/csv",
-                use_container_width=True,
-                key="download_processed_uncheck"
-            )
-        else:
-            st.info("No records were processed.")
-    
-    with tab2:
-        if results['failed']:
-            failed_df = pd.DataFrame(results['failed'], columns=['QC Name', 'Lot', 'Error'])
-            st.dataframe(failed_df, use_container_width=True, height=400)
-            
-            # Download button
-            csv = failed_df.to_csv(index=False)
-            st.download_button(
-                label="📥 Download Failed List",
-                data=csv,
-                file_name=f"failed_uncheck_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                mime="text/csv",
-                use_container_width=True,
-                key="download_failed_uncheck"
-            )
-        else:
-            st.info("No failures occurred during processing.")
-    
-    with tab3:
-        if results['not_found']:
-            not_found_df = pd.DataFrame(results['not_found'], columns=['QC Name', 'Lot', 'Reason'])
-            st.dataframe(not_found_df, use_container_width=True, height=400)
-            
-            # Download button
-            csv = not_found_df.to_csv(index=False)
-            st.download_button(
-                label="📥 Download Not Found List",
-                data=csv,
-                file_name=f"notfound_uncheck_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                mime="text/csv",
-                use_container_width=True,
-                key="download_notfound_uncheck"
-            )
-        else:
-            st.info("All records were found in the system.")
-    
-    with tab4:
-        if st.session_state.uncheck_logs:
-            log_df = pd.DataFrame(st.session_state.uncheck_logs)
-            st.dataframe(log_df, use_container_width=True, height=400)
-        else:
-            st.info("No logs available.")
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container():
+        st.markdown('<div class="metric-card shadow-sm">', unsafe_allow_html=True)
+        st.markdown("### 📊 Uncheck Ignored Results")
+        
+        # Summary metrics
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("Total Records", results['total'])
+        with col2:
+            st.metric("Processed", len(results['processed']))
+        with col3:
+            st.metric("Failed", len(results['failed']), delta_color="inverse")
+        with col4:
+            st.metric("Not Found", len(results['not_found']))
+        
+        # Detailed results in tabs
+        tab1, tab2, tab3, tab4 = st.tabs(["✅ Processed", "❌ Failed", "🔍 Not Found", "📋 Logs"])
+        
+        with tab1:
+            if results['processed']:
+                processed_df = pd.DataFrame(results['processed'], columns=['QC Name', 'Lot'])
+                st.dataframe(processed_df, use_container_width=True, height=400)
+                
+                # Download button
+                csv = processed_df.to_csv(index=False)
+                st.download_button(
+                    label="📥 Download Processed List",
+                    data=csv,
+                    file_name=f"processed_uncheck_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                    mime="text/csv",
+                    use_container_width=True,
+                    key="download_processed_uncheck"
+                )
+            else:
+                st.info("No records were processed.")
+        
+        with tab2:
+            if results['failed']:
+                failed_df = pd.DataFrame(results['failed'], columns=['QC Name', 'Lot', 'Error'])
+                st.dataframe(failed_df, use_container_width=True, height=400)
+                
+                # Download button
+                csv = failed_df.to_csv(index=False)
+                st.download_button(
+                    label="📥 Download Failed List",
+                    data=csv,
+                    file_name=f"failed_uncheck_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                    mime="text/csv",
+                    use_container_width=True,
+                    key="download_failed_uncheck"
+                )
+            else:
+                st.info("No failures occurred during processing.")
+        
+        with tab3:
+            if results['not_found']:
+                not_found_df = pd.DataFrame(results['not_found'], columns=['QC Name', 'Lot', 'Reason'])
+                st.dataframe(not_found_df, use_container_width=True, height=400)
+                
+                # Download button
+                csv = not_found_df.to_csv(index=False)
+                st.download_button(
+                    label="📥 Download Not Found List",
+                    data=csv,
+                    file_name=f"notfound_uncheck_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                    mime="text/csv",
+                    use_container_width=True,
+                    key="download_notfound_uncheck"
+                )
+            else:
+                st.info("All records were found in the system.")
+        
+        with tab4:
+            if st.session_state.uncheck_logs:
+                log_df = pd.DataFrame(st.session_state.uncheck_logs)
+                st.dataframe(log_df, use_container_width=True, height=400)
+            else:
+                st.info("No logs available.")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================
-# TAB 1: QC DATA EXPORT (EXISTING - KEPT AS IS)
+# TAB 1: QC DATA EXPORT
 # ============================
 def show_qc_export_tab(models, uid):
     """Display QC Export functionality"""
-    st.markdown("# 📊 Quality Control Dashboard")
+    st.markdown("## 📊 Quality Control Dashboard")
     st.markdown("Export and analyze QC data with ease")
     st.markdown("---")
     
     # Filter Section
-    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown("### 🔍 Search QC Records")
-    
-    with st.spinner("⏳ Loading QC records..."):
-        qc_names = fetch_qc_list(models, uid, ODOO_ADMIN_PASSWORD)
-    
-    if not qc_names:
-        st.warning("⚠️ No QC records found in Odoo.")
-        st.markdown('</div>', unsafe_allow_html=True)
-        return
-    
-    c1, c2 = st.columns([4, 1])
-    with c1:
-        display_options = ["🔎 Select or type to search..."] + qc_names
-        selected_option = st.selectbox(
-            "QC Reference", 
-            options=display_options,
-            label_visibility="collapsed",
-            key="qc_selectbox"
-        )
+    with st.container():
+        st.markdown('<div class="metric-card shadow-sm">', unsafe_allow_html=True)
+        st.markdown("### 🔍 Search QC Records")
         
-        if selected_option == "🔎 Select or type to search...":
-            selected_qc = None
-        else:
-            selected_qc = selected_option
+        with st.spinner("⏳ Loading QC records..."):
+            qc_names = fetch_qc_list(models, uid, ODOO_ADMIN_PASSWORD)
+        
+        if not qc_names:
+            st.warning("⚠️ No QC records found in Odoo.")
+            st.markdown('</div>', unsafe_allow_html=True)
+            return
+        
+        c1, c2 = st.columns([4, 1])
+        with c1:
+            display_options = ["🔎 Select or type to search..."] + qc_names
+            selected_option = st.selectbox(
+                "QC Reference", 
+                options=display_options,
+                label_visibility="collapsed",
+                key="qc_selectbox"
+            )
             
-    with c2:
-        st.markdown("<div style='height: 6px'></div>", unsafe_allow_html=True)
-        fetch_btn = st.button("🚀 Fetch Data", use_container_width=True, key="fetch_qc_data")
-        
-    st.markdown('</div>', unsafe_allow_html=True)
+            if selected_option == "🔎 Select or type to search...":
+                selected_qc = None
+            else:
+                selected_qc = selected_option
+                
+        with c2:
+            st.markdown("<div style='height: 6px'></div>", unsafe_allow_html=True)
+            fetch_btn = st.button("🚀 Fetch Data", use_container_width=True, key="fetch_qc_data")
+            
+        st.markdown('</div>', unsafe_allow_html=True)
     
     # Data Section
     if fetch_btn and selected_qc:
@@ -1343,121 +1470,124 @@ def show_qc_export_tab(models, uid):
                      key="refresh_qc_data")
 
 # ============================
-# TAB 2: BULK RELOCATION (EXISTING - KEPT AS IS)
+# TAB 2: BULK RELOCATION
 # ============================
 def show_bulk_relocation_tab(models, uid):
     """Display Bulk Relocation functionality"""
-    st.markdown("# 📦 Bulk Relocation Tool")
+    st.markdown("## 📦 Bulk Relocation Tool")
     st.markdown("Mass relocate lots to destination locations")
     st.markdown("---")
     
     # Destination Location Configuration
-    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown("### ⚙️ Relocation Settings")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        DEST_LOCATION_ID = st.number_input(
-            "Destination Location ID",
-            min_value=1,
-            value=262,
-            help="Enter the ID of the destination location (Damage/Stock)",
-            key="dest_location_id"
-        )
-    with col2:
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.info(f"📍 Lots will be relocated to Location ID: **{DEST_LOCATION_ID}**")
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container():
+        st.markdown('<div class="metric-card shadow-sm">', unsafe_allow_html=True)
+        st.markdown("### ⚙️ Relocation Settings")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            DEST_LOCATION_ID = st.number_input(
+                "Destination Location ID",
+                min_value=1,
+                value=262,
+                help="Enter the ID of the destination location (Damage/Stock)",
+                key="dest_location_id"
+            )
+        with col2:
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.info(f"📍 Lots will be relocated to Location ID: **{DEST_LOCATION_ID}**")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
     
     # File Upload Section
-    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown("### 📤 Upload Excel File")
-    
-    uploaded_file = st.file_uploader(
-        "Choose an Excel file with 'Lot' column",
-        type=['xlsx', 'xls'],
-        help="Excel file must contain a column named 'Lot'",
-        key="relocation_uploader"
-    )
-    
-    if uploaded_file is not None:
-        try:
-            # Read and validate the Excel file
-            df = pd.read_excel(uploaded_file)
-            
-            if 'Lot' not in df.columns:
-                st.error("❌ Excel file must contain a column named 'Lot'")
+    with st.container():
+        st.markdown('<div class="metric-card shadow-sm">', unsafe_allow_html=True)
+        st.markdown("### 📤 Upload Excel File")
+        
+        uploaded_file = st.file_uploader(
+            "Choose an Excel file with 'Lot' column",
+            type=['xlsx', 'xls'],
+            help="Excel file must contain a column named 'Lot'",
+            key="relocation_uploader"
+        )
+        
+        if uploaded_file is not None:
+            try:
+                # Read and validate the Excel file
+                df = pd.read_excel(uploaded_file)
+                
+                if 'Lot' not in df.columns:
+                    st.error("❌ Excel file must contain a column named 'Lot'")
+                    st.markdown('</div>', unsafe_allow_html=True)
+                    return
+                
+                # Display preview
+                st.markdown("### 📋 Data Preview")
+                st.dataframe(df.head(), use_container_width=True)
+                
+                # Statistics
+                st.markdown("### 📊 Statistics")
+                col_stats1, col_stats2 = st.columns(2)
+                with col_stats1:
+                    st.metric("Total Lots", len(df))
+                with col_stats2:
+                    st.metric("Unique Lots", df['Lot'].nunique())
+                
+                # Sample lots
+                st.markdown("### 🎯 Sample Lots")
+                st.code("\n".join(df['Lot'].dropna().head(10).astype(str).tolist()))
+                
+            except Exception as e:
+                st.error(f"Error reading file: {str(e)}")
                 st.markdown('</div>', unsafe_allow_html=True)
                 return
-            
-            # Display preview
-            st.markdown("### 📋 Data Preview")
-            st.dataframe(df.head(), use_container_width=True)
-            
-            # Statistics
-            st.markdown("### 📊 Statistics")
-            col_stats1, col_stats2 = st.columns(2)
-            with col_stats1:
-                st.metric("Total Lots", len(df))
-            with col_stats2:
-                st.metric("Unique Lots", df['Lot'].nunique())
-            
-            # Sample lots
-            st.markdown("### 🎯 Sample Lots")
-            st.code("\n".join(df['Lot'].dropna().head(10).astype(str).tolist()))
-            
-        except Exception as e:
-            st.error(f"Error reading file: {str(e)}")
-            st.markdown('</div>', unsafe_allow_html=True)
-            return
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
     
     # Action Section
     if uploaded_file is not None:
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown("### 🚀 Actions")
-        
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            if st.button("▶️ Start Relocation", 
-                        type="primary",
-                        use_container_width=True,
-                        key="start_relocation"):
-                # Initialize processing state
-                st.session_state.relocation_processing = True
-                st.session_state.relocation_logs = []
-                st.session_state.relocation_results = None
-                
-                # Store uploaded file in session state for processing
-                st.session_state.relocation_file = uploaded_file
-                st.session_state.relocation_dest_id = DEST_LOCATION_ID
-                
-                # Trigger rerun to start processing
-                st.rerun()
-        
-        with col2:
-            if st.button("🔄 Reset", 
-                        use_container_width=True,
-                        key="reset_relocation"):
-                # Clear relocation state
-                st.session_state.relocation_processing = False
-                st.session_state.relocation_results = None
-                st.session_state.relocation_logs = []
-                if 'relocation_file' in st.session_state:
-                    del st.session_state.relocation_file
-                st.rerun()
-        
-        # Show processing status
-        if st.session_state.relocation_processing:
-            st.warning("⏳ Processing in progress... Please wait.")
+        with st.container():
+            st.markdown('<div class="metric-card shadow-sm">', unsafe_allow_html=True)
+            st.markdown("### 🚀 Actions")
             
-            # Process the file if we're in processing state
-            if 'relocation_file' in st.session_state:
-                process_relocation_file(models, uid)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                if st.button("▶️ Start Relocation", 
+                            type="primary",
+                            use_container_width=True,
+                            key="start_relocation"):
+                    # Initialize processing state
+                    st.session_state.relocation_processing = True
+                    st.session_state.relocation_logs = []
+                    st.session_state.relocation_results = None
+                    
+                    # Store uploaded file in session state for processing
+                    st.session_state.relocation_file = uploaded_file
+                    st.session_state.relocation_dest_id = DEST_LOCATION_ID
+                    
+                    # Trigger rerun to start processing
+                    st.rerun()
+            
+            with col2:
+                if st.button("🔄 Reset", 
+                            use_container_width=True,
+                            key="reset_relocation"):
+                    # Clear relocation state
+                    st.session_state.relocation_processing = False
+                    st.session_state.relocation_results = None
+                    st.session_state.relocation_logs = []
+                    if 'relocation_file' in st.session_state:
+                        del st.session_state.relocation_file
+                    st.rerun()
+            
+            # Show processing status
+            if st.session_state.relocation_processing:
+                st.warning("⏳ Processing in progress... Please wait.")
+                
+                # Process the file if we're in processing state
+                if 'relocation_file' in st.session_state:
+                    process_relocation_file(models, uid)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
     
     # Display results if available
     if (st.session_state.relocation_results is not None and 
@@ -1599,70 +1729,71 @@ def display_relocation_results():
     """Display relocation results"""
     results = st.session_state.relocation_results
     
-    st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-    st.markdown("### 📊 Processing Results")
-    
-    # Summary metrics
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("Total Processed", results['total'])
-    with col2:
-        success_rate = (len(results['success']) / results['total'] * 100) if results['total'] > 0 else 0
-        st.metric("Success", len(results['success']), 
-                 delta=f"{success_rate:.1f}%")
-    with col3:
-        failure_rate = (len(results['failed']) / results['total'] * 100) if results['total'] > 0 else 0
-        st.metric("Failed", len(results['failed']),
-                 delta=f"-{failure_rate:.1f}%",
-                 delta_color="inverse")
-    
-    # Detailed results in tabs
-    tab1, tab2, tab3 = st.tabs(["✅ Success", "❌ Failed", "📋 Logs"])
-    
-    with tab1:
-        if results['success']:
-            success_df = pd.DataFrame(results['success'], columns=['Successfully Relocated Lots'])
-            st.dataframe(success_df, use_container_width=True)
-            
-            # Download button
-            csv = success_df.to_csv(index=False)
-            st.download_button(
-                label="📥 Download Success List",
-                data=csv,
-                file_name=f"success_relocation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                mime="text/csv",
-                use_container_width=True,
-                key="download_success_relocation"
-            )
-        else:
-            st.info("No lots were successfully relocated.")
-    
-    with tab2:
-        if results['failed']:
-            failed_df = pd.DataFrame(results['failed'], columns=['Lot', 'Error'])
-            st.dataframe(failed_df, use_container_width=True)
-            
-            # Download button
-            csv = failed_df.to_csv(index=False)
-            st.download_button(
-                label="📥 Download Failed List",
-                data=csv,
-                file_name=f"failed_relocation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                mime="text/csv",
-                use_container_width=True,
-                key="download_failed_relocation"
-            )
-        else:
-            st.info("No failures occurred during processing.")
-    
-    with tab3:
-        if st.session_state.relocation_logs:
-            log_df = pd.DataFrame(st.session_state.relocation_logs)
-            st.dataframe(log_df, use_container_width=True)
-        else:
-            st.info("No logs available.")
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container():
+        st.markdown('<div class="metric-card shadow-sm">', unsafe_allow_html=True)
+        st.markdown("### 📊 Processing Results")
+        
+        # Summary metrics
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Total Processed", results['total'])
+        with col2:
+            success_rate = (len(results['success']) / results['total'] * 100) if results['total'] > 0 else 0
+            st.metric("Success", len(results['success']), 
+                     delta=f"{success_rate:.1f}%")
+        with col3:
+            failure_rate = (len(results['failed']) / results['total'] * 100) if results['total'] > 0 else 0
+            st.metric("Failed", len(results['failed']),
+                     delta=f"-{failure_rate:.1f}%",
+                     delta_color="inverse")
+        
+        # Detailed results in tabs
+        tab1, tab2, tab3 = st.tabs(["✅ Success", "❌ Failed", "📋 Logs"])
+        
+        with tab1:
+            if results['success']:
+                success_df = pd.DataFrame(results['success'], columns=['Successfully Relocated Lots'])
+                st.dataframe(success_df, use_container_width=True)
+                
+                # Download button
+                csv = success_df.to_csv(index=False)
+                st.download_button(
+                    label="📥 Download Success List",
+                    data=csv,
+                    file_name=f"success_relocation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                    mime="text/csv",
+                    use_container_width=True,
+                    key="download_success_relocation"
+                )
+            else:
+                st.info("No lots were successfully relocated.")
+        
+        with tab2:
+            if results['failed']:
+                failed_df = pd.DataFrame(results['failed'], columns=['Lot', 'Error'])
+                st.dataframe(failed_df, use_container_width=True)
+                
+                # Download button
+                csv = failed_df.to_csv(index=False)
+                st.download_button(
+                    label="📥 Download Failed List",
+                    data=csv,
+                    file_name=f"failed_relocation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                    mime="text/csv",
+                    use_container_width=True,
+                    key="download_failed_relocation"
+                )
+            else:
+                st.info("No failures occurred during processing.")
+        
+        with tab3:
+            if st.session_state.relocation_logs:
+                log_df = pd.DataFrame(st.session_state.relocation_logs)
+                st.dataframe(log_df, use_container_width=True)
+            else:
+                st.info("No logs available.")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================
 # MAIN APP LOGIC
@@ -1713,33 +1844,32 @@ def main():
             # Logged In View
             st.markdown(f"""
             <div class="user-badge">
-                <div style="font-size: 48px; margin-bottom: 12px;">👤</div>
-                <div style="font-size: 18px; font-weight: 600;">{APP_USERNAME}</div>
-                <div style="font-size: 12px; opacity: 0.9; margin-top: 8px;">● Connected to Odoo</div>
+                <div style="font-size: 32px; margin-bottom: 8px;">👤</div>
+                <div style="font-size: 16px; font-weight: 600;">{APP_USERNAME}</div>
+                <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">● Connected to Odoo</div>
             </div>
             """, unsafe_allow_html=True)
             
             st.markdown("### 📂 Navigation")
+            st.markdown("---")
             
-            # Navigation buttons
-            cols = st.columns(2)
-            tabs = [
-                ("📊 QC Export", "QC Export"),
-                ("📦 Relocation", "Bulk Relocation"),
-                ("🏢 Company-Safe", "Company-Safe Relocation"),
-                ("🔄 Uncheck", "Uncheck Ignored")
-            ]
+            # Navigation buttons with active state
+            nav_tabs = {
+                "QC Export": "📊",
+                "Bulk Relocation": "📦", 
+                "Company-Safe Relocation": "🏢",
+                "Uncheck Ignored": "🔄"
+            }
             
-            for idx, (label, tab_name) in enumerate(tabs):
-                with cols[idx % 2]:
-                    if st.button(label, 
-                               use_container_width=True,
-                               key=f"nav_{tab_name.replace(' ', '_').lower()}"):
-                        st.session_state.current_tab = tab_name
-                        st.rerun()
-            
-            # Highlight active tab
-            st.markdown(f"**Active Tab:** `{st.session_state.current_tab}`")
+            for tab_name, icon in nav_tabs.items():
+                is_active = st.session_state.current_tab == tab_name
+                button_class = "sidebar-nav-active" if is_active else "sidebar-nav-button"
+                
+                if st.button(f"{icon} {tab_name}", 
+                           use_container_width=True,
+                           key=f"nav_{tab_name.replace(' ', '_').lower()}"):
+                    st.session_state.current_tab = tab_name
+                    st.rerun()
             
             st.markdown("---")
             
@@ -1770,36 +1900,54 @@ def main():
     # ----------------------------------
     if not st.session_state.logged_in:
         # Hero Section for Logged Out State
-        st.markdown("""
-        <div class="hero-section">
-            <div class="hero-title">📦 Odoo Operations Portal</div>
-            <div class="hero-subtitle">QC Management & Bulk Relocation Platform</div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
+            st.markdown("""
+            <div style="text-align: center; padding: 40px 20px;">
+                <h1 style="color: #1e40af; margin-bottom: 16px;">📦 Odoo Operations Portal</h1>
+                <p style="color: #6b7280; font-size: 16px;">QC Management & Bulk Relocation Platform</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown("---")
             st.info("👈 **Please log in** using the sidebar to access the dashboard")
             
             st.markdown("### ✨ Features")
-            st.markdown("""
-            - **📊 QC Data Export** - Export and analyze quality control records
-            - **📦 Bulk Relocation** - Mass relocate lots to different locations
-            - **🏢 Company-Safe Relocation** - Smart relocation with company matching
-            - **🔄 Uncheck Ignored** - Remove ignored status from QC items
-            - **🔍 Smart Search** - Find records instantly with intelligent filtering
-            - **📈 Live Analytics** - Real-time data insights and metrics
-            - **📥 Multi-format Export** - Download data as CSV or Excel
-            - **🔒 Secure** - Enterprise-grade authentication and protection
-            - **⚡ Fast Processing** - Optimized for large datasets
-            """)
+            features = [
+                ("📊", "QC Data Export", "Export and analyze quality control records"),
+                ("📦", "Bulk Relocation", "Mass relocate lots to different locations"),
+                ("🏢", "Company-Safe Relocation", "Smart relocation with company matching"),
+                ("🔄", "Uncheck Ignored", "Remove ignored status from QC items"),
+                ("🔍", "Smart Search", "Find records instantly with intelligent filtering"),
+                ("📈", "Live Analytics", "Real-time data insights and metrics"),
+                ("📥", "Multi-format Export", "Download data as CSV or Excel"),
+                ("🔒", "Secure", "Enterprise-grade authentication and protection"),
+                ("⚡", "Fast Processing", "Optimized for large datasets")
+            ]
+            
+            for icon, title, desc in features:
+                with st.container():
+                    cols = st.columns([1, 10])
+                    with cols[0]:
+                        st.markdown(f"<div style='font-size: 20px;'>{icon}</div>", unsafe_allow_html=True)
+                    with cols[1]:
+                        st.markdown(f"**{title}**<br><span style='color: #6b7280; font-size: 14px;'>{desc}</span>", unsafe_allow_html=True)
+                st.markdown("---")
     
     else:
         # Dashboard with Tabs
         models = st.session_state.odoo_conn["models"]
         uid = st.session_state.odoo_conn["uid"]
+        
+        # Page Header
+        st.markdown(f"""
+        <div style="margin-bottom: 24px;">
+            <h1 style="margin-bottom: 8px; color: #1e40af;">{st.session_state.current_tab}</h1>
+            <div style="color: #6b7280; font-size: 14px;">
+                Logged in as <strong>{APP_USERNAME}</strong> | Connected to Odoo
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
         
         # Display current tab content
         if st.session_state.current_tab == "QC Export":
